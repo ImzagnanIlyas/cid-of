@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateAttachementsTable extends Migration
+class CreateRolesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,9 @@ class CreateAttachementsTable extends Migration
      */
     public function up()
     {
-        Schema::create('attachements', function (Blueprint $table) {
+        Schema::create('roles', function (Blueprint $table) {
             $table->id();
-            $table->text('type');
-            $table->text('context');
             $table->string('nom');
-            $table->unsignedBigInteger('ordre_id');
-            $table->foreign('ordre_id')->references('id')->on('ordres');
             $table->timestamps();
         });
     }
@@ -31,6 +27,6 @@ class CreateAttachementsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('attachements');
+        Schema::dropIfExists('roles');
     }
 }

@@ -15,13 +15,13 @@ class CreateFacturesTable extends Migration
     {
         Schema::create('factures', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('ordre_id');
             $table->date('date_facturation');
             $table->date('date_reception_client');
             $table->decimal('montant');
             $table->string('montant_devise');
             $table->string('numero_facture');
             $table->boolean('reception_client');
+            $table->unsignedBigInteger('ordre_id');
             $table->foreign('ordre_id')->references('id')->on('ordres');
 
             $table->timestamps();

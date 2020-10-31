@@ -15,7 +15,6 @@ class CreateOrdresTable extends Migration
     {
         Schema::create('ordres', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('division_id');
             $table->string('client');
             $table->string('code_affaire');
             $table->text('motif')->nullable();
@@ -32,6 +31,7 @@ class CreateOrdresTable extends Migration
             $table->string('statut');
             $table->string('type');
             $table->string('ville');
+            $table->unsignedBigInteger('division_id');
             $table->foreign('division_id')->references('id')->on('divisions');
 
             $table->timestamps();
