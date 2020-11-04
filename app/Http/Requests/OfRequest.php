@@ -42,10 +42,6 @@ class OfRequest extends FormRequest
                 'justification.*' => 'nullable|mimes:pdf',
             ];
         }else{ //validation for Update
-            $ordre_file = Attachement::where([
-                ['context', '=', FacadesRequest::segment(2)],
-                ['ordre_id', '=', FacadesRequest::segment(3)]
-            ])->get();
             return [
                 'division_id' => 'required',
                 'ville' => 'required',

@@ -38,7 +38,7 @@ use Illuminate\Support\Facades\Request as FacadesRequest;
         });
 
         //remove file and add id to input (ordre_file_id)
-        $("body").on("click",".btn-danger",function(){
+        $("ul[role=ordre-file]").on("click",".btn-danger",function(){
 
             $("input[name=ordre_file_id]").val($(this).attr('id'));
             $(this).parents("li[role=ordre_file]").remove();

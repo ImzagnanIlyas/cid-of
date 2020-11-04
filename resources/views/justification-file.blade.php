@@ -42,7 +42,7 @@ use Illuminate\Support\Facades\Request as FacadesRequest;
         });
 
         //remove file from list and add id to input (justification_file_id)
-        $("body").on("click",".btn-danger",function(){
+        $("ul[role=justification-file]").on("click",".btn-danger",function(){
             ids.push($(this).attr('id'));
             $("input[name=justification_file_id]").val(ids);
             $(this).parents("li[role=justification_file"+$(this).attr('id')+"]").remove();
