@@ -7,15 +7,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class Division extends Model
 {
+    use \Backpack\CRUD\app\Models\Traits\CrudTrait;
     use HasFactory;
 
     public function ordres()
     {
-        return $this->hasMany('App\Ordre');
+        return $this->hasMany('App\Models\Ordre');
     }
 
     public function pole()
     {
-        return $this->belongsTo('App\Pole');
+        return $this->belongsTo('App\Models\Pole');
     }
 }

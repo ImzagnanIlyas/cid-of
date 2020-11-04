@@ -7,11 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Pole extends Model
 {
+    use \Backpack\CRUD\app\Models\Traits\CrudTrait;
     use HasFactory;
 
     public function divisions()
     {
-        return $this->hasMany('App\Division');
+        return $this->hasMany('App\Models\Division');
     }
 
 }
