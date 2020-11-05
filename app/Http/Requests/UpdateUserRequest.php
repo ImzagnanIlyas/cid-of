@@ -6,7 +6,7 @@ use App\Http\Requests\Request;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Request as FacadesRequest;
 
-class UserRequest extends FormRequest
+class UpdateUserRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,21 +26,12 @@ class UserRequest extends FormRequest
      */
     public function rules()
     {
-        if (FacadesRequest::segment(4) == 'create') {
-            return [
-                'name' => 'required|min:3|max:50',
-                'email' => 'required|email',
-                'password' => 'required|confirmed|min:8',
-                'role' => 'required',
-            ];
-        }else {
-            return [
-                'name' => 'min:3|max:50',
-                'email' => 'email',
-                'password' => 'nullable|confirmed|min:8',
-                //'role' => 'required',
-            ];
-        }
+        return [
+            'name' => 'min:3|max:50',
+            'email' => 'email|unique:users,email,'.FacadesRequest::segment(3),
+            'password' => 'nullable|confirmed|min:8',
+            //'role' => 'required',
+        ];
 
     }
 
