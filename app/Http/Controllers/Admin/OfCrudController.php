@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Requests\OfRequest;
+use App\Http\Requests\CreateOfRequest as StoreRequest;
+use App\Http\Requests\UpdateOfRequest as UpdateRequest;
 use App\Models\Attachement;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
@@ -75,7 +76,7 @@ class OfCrudController extends CrudController
         CRUD::column('code_affaire');
         CRUD::column('client');
         CRUD::column('montant')->type('number')->decimals(2)->dec_point('.')->thousands_sep(' ');
-        CRUD::column('observation');
+        CRUD::column('observation')->limit(10);
         CRUD::column('statut');
         CRUD::column('date_accept');
         CRUD::column('date_envoi');
@@ -96,7 +97,7 @@ class OfCrudController extends CrudController
      */
     protected function setupCreateOperation()
     {
-        CRUD::setValidation(OfRequest::class);
+        CRUD::setValidation(StoreRequest::class);
 
         $this->crud->addField(
             [
@@ -187,7 +188,7 @@ class OfCrudController extends CrudController
      */
     protected function setupUpdateOperation()
     {
-        CRUD::setValidation(OfRequest::class);
+        CRUD::setValidation(UpdateRequest::class);
 
         $this->crud->addField(
             [
