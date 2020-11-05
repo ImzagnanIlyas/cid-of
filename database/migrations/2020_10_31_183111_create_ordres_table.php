@@ -27,12 +27,14 @@ class CreateOrdresTable extends Migration
             $table->string('montant_devise');
             $table->string('numero_of');
             $table->text('observation')->nullable();
-            $table->boolean('refus');
-            $table->string('statut');
+            $table->boolean('refus')->default(0);
+            $table->string('statut')->default('En cours');
             $table->string('type');
             $table->string('ville')->nullable();
             $table->unsignedBigInteger('division_id');
             $table->foreign('division_id')->references('id')->on('divisions');
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->foreign('user_id')->references('id')->on('users');
 
             $table->timestamps();
         });
