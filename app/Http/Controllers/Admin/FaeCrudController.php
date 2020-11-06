@@ -62,6 +62,10 @@ class FaeCrudController extends CrudController
      */
     protected function setupListOperation()
     {
+        //Custom Query
+        $this->crud->addClause('where', 'user_id', '=', backpack_user()->id);
+
+        //Columns
         CRUD::column('division')->type('relationship')->attribute('nom');
         CRUD::column('code_affaire');
         CRUD::column('client');
@@ -118,9 +122,8 @@ class FaeCrudController extends CrudController
 
         // hidden fields :
         CRUD::field('date_envoi')->type('hidden')->value(date('Y-m-d'));
-        CRUD::field('refus')->type('hidden')->value(0);
-        CRUD::field('statut')->type('hidden')->value('En cours');
         CRUD::field('type')->type('hidden')->value('FAE');
+        CRUD::field('user_id')->type('hidden')->value(backpack_user()->id);
 
         /**
          * Fields can be defined using the fluent syntax or array syntax:

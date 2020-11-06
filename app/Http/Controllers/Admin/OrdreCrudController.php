@@ -40,9 +40,14 @@ class OrdreCrudController extends CrudController
      */
     protected function setupListOperation()
     {
+        //Custom Query
+        $this->crud->addClause('where', 'user_id', '=', backpack_user()->id);
+
+        //Hide Action buttons
         $this->crud->denyAccess('delete');
         $this->crud->denyAccess('update');
 
+        //Filters
         $this->crud->addFilter([
             'type'  => 'simple',
             'name'  => 'active',
@@ -53,6 +58,7 @@ class OrdreCrudController extends CrudController
             // $this->crud->addClause('active'); // apply the "active" eloquent scope
           } );
 
+        //Columns
         CRUD::column('client');
         CRUD::column('code_affaire');
         CRUD::column('motif');

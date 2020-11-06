@@ -28,6 +28,7 @@ class Ordre extends Model
         'refus',
         'statut',
         'type',
+        'user_id',
     ];
 
     public function division()
