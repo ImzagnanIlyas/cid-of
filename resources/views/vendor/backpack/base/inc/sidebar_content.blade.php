@@ -3,3 +3,5 @@
 <li class='nav-item'><a class='nav-link' href='{{ backpack_url('user') }}'><i class='nav-icon la la-users'></i> Users</a></li>
 <li class='nav-item'><a class='nav-link' href='{{ backpack_url('of') }}'><i class='nav-icon la la-file-invoice'></i> Ordres de facturations</a></li>
 <li class='nav-item'><a class='nav-link' href='{{ backpack_url('fae') }}'><i class='nav-icon la la-cart-arrow-down'></i> Factures à établir</a></li>
+
+<li class='nav-item'><a class='nav-link' href='{{ backpack_url('ordre') }}'><i class='nav-icon la la-question'></i> Ordres</a></li>
