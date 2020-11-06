@@ -42,7 +42,7 @@ use Illuminate\Support\Facades\Request as FacadesRequest;
 
             $("input[name=ordre_file_id]").val($(this).attr('id'));
             $(this).parents("li[role=ordre_file]").remove();
-            $('input[name=of]').prop("disabled", false);
+            $('input[name=document]').prop("disabled", false);
         });
     });
 

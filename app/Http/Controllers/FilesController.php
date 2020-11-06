@@ -11,12 +11,21 @@ class FilesController extends Controller
     {
         $ordre_id = $request->id;
         $ordre_context = $request->context;
-        return response()->json(
-            Attachement::where([
-                ['context', '=', $ordre_context],
-                ['ordre_id', '=', $ordre_id],
-            ])->get()
-        );
+        if ($ordre_context == 'ordre' || $ordre_context == 'orj') {
+            return response()->json(
+                Attachement::where('ordre_id', '=', $ordre_id)
+                ->where('context', '=', 'of')
+                ->orWhere('context', '=', 'fae')
+                ->get()
+            );
+        }else{
+            return response()->json(
+                Attachement::where([
+                    ['context', '=', $ordre_context],
+                    ['ordre_id', '=', $ordre_id],
+                ])->get()
+            );
+        }
     }
 
     public function download($path)

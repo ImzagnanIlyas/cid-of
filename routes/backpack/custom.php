@@ -18,4 +18,5 @@ Route::group([
     Route::crud('of', 'OfCrudController');
     Route::crud('fae', 'FaeCrudController');
     Route::crud('ordre', 'OrdreCrudController');
+    Route::crud('orj', 'OrjCrudController');
 }); // this should be the absolute last line of this file

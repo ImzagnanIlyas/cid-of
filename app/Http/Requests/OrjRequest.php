@@ -2,11 +2,12 @@
 
 namespace App\Http\Requests;
 
-use App\Models\Attachement;
+use App\Http\Requests\Request;
+use App\Models\Ordre;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Request as FacadesRequest;
 
-class FaeRequest extends FormRequest
+class OrjRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,14 +27,17 @@ class FaeRequest extends FormRequest
      */
     public function rules()
     {
+        $id = FacadesRequest::segment(3); //id of selected ordre
+        $ordre = Ordre::findOrFail($id); //Ordre to be updated
         return [
             'division_id' => 'required',
-            'numero_of' => 'required',
+            'ville' =>  ($ordre->type == 'OF') ? 'required' : 'nullable',
             'code_affaire' => 'required',
             'client' => 'required',
             'montant' => 'required',
             'montant_devise' => 'required',
-            'fae' => 'required|mimes:pdf',
+            'document' => 'required_with:ordre_file_id|mimes:pdf',
+            'justification.*' => 'nullable|mimes:pdf',
         ];
     }
 
@@ -45,7 +49,7 @@ class FaeRequest extends FormRequest
     public function attributes()
     {
         return [
-            'fae' => 'Facture à établir',
+            //
         ];
     }
 
@@ -57,7 +61,7 @@ class FaeRequest extends FormRequest
     public function messages()
     {
         return [
-
+            //
         ];
     }
 }
