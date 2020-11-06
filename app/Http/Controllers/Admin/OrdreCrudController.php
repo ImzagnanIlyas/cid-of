@@ -43,6 +43,9 @@ class OrdreCrudController extends CrudController
         //Custom Query
         $this->crud->addClause('where', 'user_id', '=', backpack_user()->id);
 
+        //Remove add Button
+        $this->crud->denyAccess('create');
+
         //Hide Action buttons
         $this->crud->denyAccess('delete');
         $this->crud->denyAccess('update');
@@ -112,5 +115,9 @@ class OrdreCrudController extends CrudController
             'type' => 'view',
             'view' => 'ordre-file'
         ]);
+
+        // Remove action column
+        $this->crud->removeButton( 'update' );
+        $this->crud->removeButton( 'delete' );
     }
 }

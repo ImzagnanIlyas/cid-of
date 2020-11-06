@@ -42,6 +42,9 @@ class OrjCrudController extends CrudController
      */
     protected function setupListOperation()
     {
+        //Remove add Button
+        $this->crud->denyAccess('create');
+
         //Custom Query
         $this->crud->addClause('where', 'user_id', '=', backpack_user()->id);
 
@@ -54,6 +57,9 @@ class OrjCrudController extends CrudController
         CRUD::column('motif')->limit(10);
         CRUD::column('date_refus');
 
+        //Hide buttons
+        $this->crud->denyAccess('delete');
+        $this->crud->denyAccess('show');
 
         /**
          * Columns can be defined using the fluent syntax or array syntax:

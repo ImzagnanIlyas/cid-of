@@ -52,6 +52,10 @@ class FaeCrudController extends CrudController
             'view' => 'ordre-file'
         ]);
 
+        // Remove action column
+        $this->crud->removeButton( 'update' );
+        $this->crud->removeButton( 'delete' );
+
     }
 
     /**
@@ -74,6 +78,10 @@ class FaeCrudController extends CrudController
         CRUD::column('statut');
         CRUD::column('date_accept');
         CRUD::column('date_envoi');
+
+        //Hide buttons
+        $this->crud->denyAccess('delete');
+        $this->crud->denyAccess('update');
 
         /**
          * Columns can be defined using the fluent syntax or array syntax:
