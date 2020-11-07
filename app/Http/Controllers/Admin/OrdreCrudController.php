@@ -30,6 +30,8 @@ class OrdreCrudController extends CrudController
         CRUD::setModel(\App\Models\Ordre::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/ordre');
         CRUD::setEntityNameStrings('ordre', 'ordres');
+        if( backpack_user()->role_id != config('backpack.role.ca_id') )
+            abort(403);
     }
 
     /**

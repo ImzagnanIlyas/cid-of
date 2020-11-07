@@ -28,7 +28,9 @@ class FaeCrudController extends CrudController
     {
         CRUD::setModel(\App\Models\Fae::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/fae');
-        CRUD::setEntityNameStrings('fae', 'faes');
+        CRUD::setEntityNameStrings('Facture à établir', 'Factures à établir');
+        if( backpack_user()->role_id != config('backpack.role.ca_id') )
+            abort(403);
     }
 
     protected function setupShowOperation()

@@ -31,7 +31,9 @@ class OfCrudController extends CrudController
     {
         CRUD::setModel(\App\Models\Of::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/of');
-        CRUD::setEntityNameStrings('of', 'ofs');
+        CRUD::setEntityNameStrings('Ordre de facturation', 'Ordres de facturations');
+        if( backpack_user()->role_id != config('backpack.role.ca_id') )
+            abort(403);
     }
 
     protected function setupShowOperation()
@@ -85,7 +87,20 @@ class OfCrudController extends CrudController
         CRUD::column('client');
         CRUD::column('montant')->type('number')->decimals(2)->dec_point('.')->thousands_sep(' ');
         CRUD::column('observation')->limit(10);
-        CRUD::column('statut');
+        $this->crud->addColumn([
+            'name'     => 'statut',
+            'label'    => 'Statut',
+            'type'     => 'closure',
+            'function' => function($entry) {
+                if($entry->statut == 'En cours')
+                    return '<span class="badge badge-warning">'.$entry->statut.'</span>';
+                if($entry->statut == 'Accepte')
+                    return '<span class="badge badge-success">Accepté</span>';
+                if($entry->statut == 'Refuse')
+                    return '<span class="badge badge-danger">Refusé</span>';
+
+            }
+        ]);
         CRUD::column('date_accept');
         CRUD::column('date_envoi');
 

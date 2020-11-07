@@ -31,7 +31,9 @@ class OrjCrudController extends CrudController
     {
         CRUD::setModel(\App\Models\Orj::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/orj');
-        CRUD::setEntityNameStrings('orj', 'orjs');
+        CRUD::setEntityNameStrings('orj', 'ODF/FAE rejetés');
+        if( backpack_user()->role_id != config('backpack.role.ca_id') )
+            abort(403);
     }
 
     /**
