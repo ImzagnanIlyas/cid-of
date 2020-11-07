@@ -82,7 +82,7 @@ class UserCrudController extends CrudController
         CRUD::field('password');
         CRUD::field('password_confirmation')->type('password');
         $this->crud->addField([
-            'name' => 'role',
+            'name' => 'role_id',
             'type' => "relationship",
             'attribute' => "nom",
             'placeholder' => "Select a role",
