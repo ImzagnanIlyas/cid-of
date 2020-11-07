@@ -17,6 +17,7 @@ class CreatePolesTable extends Migration
             $table->id();
             $table->string('abr');
             $table->string('nom');
+            $table->timestamps();
         });
     }
 

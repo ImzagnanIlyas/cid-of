@@ -10,6 +10,11 @@ class Pole extends Model
     use \Backpack\CRUD\app\Models\Traits\CrudTrait;
     use HasFactory;
 
+    protected $fillable = [
+        'abr',
+        'nom',
+    ];
+
     public function divisions()
     {
         return $this->hasMany('App\Models\Division');

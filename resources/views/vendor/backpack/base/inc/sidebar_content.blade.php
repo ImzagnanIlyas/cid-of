@@ -2,6 +2,9 @@
 <li class="nav-item"><a class="nav-link" href="{{ backpack_url('dashboard') }}"><i class="la la-home nav-icon"></i> {{ trans('backpack::base.dashboard') }}</a></li>
 @if( backpack_user()->role_id == config('backpack.role.admin_id') )
 <li class='nav-item'><a class='nav-link' href='{{ backpack_url('user') }}'><i class='nav-icon la la-users'></i> Users</a></li>
+<li class='nav-item'><a class='nav-link' href='{{ backpack_url('role') }}'><i class='nav-icon la la-user-lock'></i> Roles</a></li>
+<li class='nav-item'><a class='nav-link' href='{{ backpack_url('pole') }}'><i class='nav-icon la la-box'></i> Poles</a></li>
+<li class='nav-item'><a class='nav-link' href='{{ backpack_url('division') }}'><i class='nav-icon la la-folder'></i> Divisions</a></li>
 @endif
 @if( backpack_user()->role_id == config('backpack.role.ca_id') )
 <li class="nav-item nav-dropdown"><a class="nav-link nav-dropdown-toggle" href="#"><i class="nav-icon la la-lg la-plus"></i> Enregistrer</a>

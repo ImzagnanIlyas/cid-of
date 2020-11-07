@@ -18,6 +18,7 @@ class CreateDivisionsTable extends Migration
             $table->unsignedBigInteger('pole_id');
             $table->string('nom');
             $table->foreign('pole_id')->references('id')->on('poles');
+            $table->timestamps();
         });
     }
 

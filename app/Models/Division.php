@@ -10,6 +10,11 @@ class Division extends Model
     use \Backpack\CRUD\app\Models\Traits\CrudTrait;
     use HasFactory;
 
+    protected $fillable = [
+        'pole_id',
+        'nom',
+    ];
+
     public function ordres()
     {
         return $this->hasMany('App\Models\Ordre');
