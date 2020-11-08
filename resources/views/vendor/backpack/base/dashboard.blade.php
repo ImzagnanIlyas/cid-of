@@ -72,21 +72,25 @@
         <div class="card text-white bg-primary">
             <div class="card-body">
             <div class="h1 text-muted text-right mb-4"><i class='nav-icon la la-file-invoice'></i></div>
-            <div class="text-value">{{ App\Models\Ordre::where('user_id', backpack_user()->id)->count() }}</div><small class="text-muted text-uppercase font-weight-bold">Total des ODFs et FAEs</small>
+            <div class="text-value">
+                {{ App\Models\Ordre::where('user_id', backpack_user()->id)->count() }}
+            </div><small class="text-muted text-uppercase font-weight-bold">Total des ODFs et FAEs</small>
             <div class="progress progress-white progress-xs mt-3">
                 <div class="progress-bar" role="progressbar" style="width: 100%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
             </div>
             <div class="row mt-2">
                 <div class="col-md-6 text-center">
-                    <div class="text-value">{{ App\Models\Of::where('user_id', backpack_user()->id)->count() }}</div><small class="text-muted text-uppercase font-weight-bold">ODFs</small>
+                    <div class="text-value">
+                        {{ App\Models\Of::where('user_id', backpack_user()->id)->count() }}
+                    </div><small class="text-muted text-uppercase font-weight-bold">ODFs</small>
                     <div class="progress progress-white progress-xs mt-3">
-                        <div class="progress-bar" role="progressbar" style="width: 75%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                        <div class="progress-bar" role="progressbar" style="width: {{ (App\Models\Of::where('user_id', backpack_user()->id)->count()/App\Models\Ordre::where('user_id', backpack_user()->id)->count())*100 }}%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
                     </div>
                 </div>
                 <div class="col-md-6 text-center">
                     <div class="text-value">{{ App\Models\Fae::where('user_id', backpack_user()->id)->count() }}</div><small class="text-muted text-uppercase font-weight-bold">FAEs</small>
                     <div class="progress progress-white progress-xs mt-3">
-                        <div class="progress-bar" role="progressbar" style="width: 25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                        <div class="progress-bar" role="progressbar" style="width: {{ (App\Models\Fae::where('user_id', backpack_user()->id)->count()/App\Models\Ordre::where('user_id', backpack_user()->id)->count())*100 }}%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
                     </div>
                 </div>
             </div>
@@ -100,19 +104,19 @@
             <div class="h1 text-muted text-right mb-4"><i class='nav-icon la la-clock-o'></i></div>
             <div class="text-value">{{ App\Models\Ordre::where('statut', 'En cours')->where('user_id', backpack_user()->id)->count() }}</div><small class="text-muted text-uppercase font-weight-bold">En cours</small>
             <div class="progress progress-white progress-xs mt-3">
-                <div class="progress-bar" role="progressbar" style="width: 40%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                <div class="progress-bar" role="progressbar" style="width: {{ (App\Models\Ordre::where('statut', 'En cours')->where('user_id', backpack_user()->id)->count()/App\Models\Ordre::where('user_id', backpack_user()->id)->count())*100 }}%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
             </div>
             <div class="row mt-2">
                 <div class="col-md-6 text-center">
                     <div class="text-value">{{ App\Models\Of::where('statut', 'En cours')->where('user_id', backpack_user()->id)->count() }}</div><small class="text-muted text-uppercase font-weight-bold">ODFs</small>
                     <div class="progress progress-white progress-xs mt-3">
-                        <div class="progress-bar" role="progressbar" style="width: 75%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                        <div class="progress-bar" role="progressbar" style="width: {{ (App\Models\Of::where('statut', 'En cours')->where('user_id', backpack_user()->id)->count()/App\Models\Of::where('user_id', backpack_user()->id)->count())*100 }}%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
                     </div>
                 </div>
                 <div class="col-md-6 text-center">
                     <div class="text-value">{{ App\Models\Fae::where('statut', 'En cours')->where('user_id', backpack_user()->id)->count() }}</div><small class="text-muted text-uppercase font-weight-bold">FAEs</small>
                     <div class="progress progress-white progress-xs mt-3">
-                        <div class="progress-bar" role="progressbar" style="width: 25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                        <div class="progress-bar" role="progressbar" style="width: {{ (App\Models\Fae::where('statut', 'En cours')->where('user_id', backpack_user()->id)->count()/App\Models\Fae::where('user_id', backpack_user()->id)->count())*100 }}%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
                     </div>
                 </div>
             </div>
@@ -126,19 +130,19 @@
             <div class="h1 text-muted text-right mb-4"><i class='nav-icon la la-check-circle'></i></div>
             <div class="text-value">{{ App\Models\Ordre::where('statut', 'accepte')->where('user_id', backpack_user()->id)->count() }}</div><small class="text-muted text-uppercase font-weight-bold">Acceptés</small>
             <div class="progress progress-white progress-xs mt-3">
-                <div class="progress-bar" role="progressbar" style="width: 20%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                <div class="progress-bar" role="progressbar" style="width: {{ (App\Models\Ordre::where('statut', 'accepte')->where('user_id', backpack_user()->id)->count()/App\Models\Ordre::where('user_id', backpack_user()->id)->count())*100 }}%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
             </div>
             <div class="row mt-2">
                 <div class="col-md-6 text-center">
                     <div class="text-value">{{ App\Models\Of::where('statut', 'accepte')->where('user_id', backpack_user()->id)->count() }}</div><small class="text-muted text-uppercase font-weight-bold">ODFs</small>
                     <div class="progress progress-white progress-xs mt-3">
-                        <div class="progress-bar" role="progressbar" style="width: 75%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                        <div class="progress-bar" role="progressbar" style="width: {{ (App\Models\Of::where('statut', 'accepte')->where('user_id', backpack_user()->id)->count()/App\Models\Of::where('user_id', backpack_user()->id)->count())*100 }}%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
                     </div>
                 </div>
                 <div class="col-md-6 text-center">
                     <div class="text-value">{{ App\Models\Fae::where('statut', 'accepte')->where('user_id', backpack_user()->id)->count() }}</div><small class="text-muted text-uppercase font-weight-bold">FAEs</small>
                     <div class="progress progress-white progress-xs mt-3">
-                        <div class="progress-bar" role="progressbar" style="width: 25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                        <div class="progress-bar" role="progressbar" style="width: {{ (App\Models\Fae::where('statut', 'accepte')->where('user_id', backpack_user()->id)->count()/App\Models\Fae::where('user_id', backpack_user()->id)->count())*100 }}%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
                     </div>
                 </div>
             </div>
@@ -152,19 +156,19 @@
             <div class="h1 text-muted text-right mb-4"><i class='nav-icon la la-ban'></i></div>
             <div class="text-value">{{ App\Models\Ordre::where('refus', '1')->where('user_id', backpack_user()->id)->count() }}</div><small class="text-muted text-uppercase font-weight-bold">Refusés</small>
             <div class="progress progress-white progress-xs mt-3">
-                <div class="progress-bar" role="progressbar" style="width: 20%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                <div class="progress-bar" role="progressbar" style="width: {{ (App\Models\Ordre::where('refus', '1')->where('user_id', backpack_user()->id)->count()/App\Models\Ordre::where('user_id', backpack_user()->id)->count())*100 }}%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
             </div>
             <div class="row mt-2">
                 <div class="col-md-6 text-center">
                     <div class="text-value">{{ App\Models\Of::where('refus', '1')->where('user_id', backpack_user()->id)->count() }}</div><small class="text-muted text-uppercase font-weight-bold">ODFs</small>
                     <div class="progress progress-white progress-xs mt-3">
-                        <div class="progress-bar" role="progressbar" style="width: 75%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                        <div class="progress-bar" role="progressbar" style="width: {{ (App\Models\Of::where('refus', '1')->where('user_id', backpack_user()->id)->count()/App\Models\Of::where('user_id', backpack_user()->id)->count())*100 }}%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
                     </div>
                 </div>
                 <div class="col-md-6 text-center">
                     <div class="text-value">{{ App\Models\Fae::where('refus', '1')->where('user_id', backpack_user()->id)->count() }}</div><small class="text-muted text-uppercase font-weight-bold">FAEs</small>
                     <div class="progress progress-white progress-xs mt-3">
-                        <div class="progress-bar" role="progressbar" style="width: 25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                        <div class="progress-bar" role="progressbar" style="width: {{ (App\Models\Fae::where('refus', '1')->where('user_id', backpack_user()->id)->count()/App\Models\Fae::where('user_id', backpack_user()->id)->count())*100 }}%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
                     </div>
                 </div>
             </div>
