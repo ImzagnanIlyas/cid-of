@@ -29,7 +29,7 @@ class OrdreCrudController extends CrudController
     {
         CRUD::setModel(\App\Models\Ordre::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/ordre');
-        CRUD::setEntityNameStrings('ordre', 'ordres');
+        CRUD::setEntityNameStrings('ODF/FAE', 'Les ODFs/FAEs');
         if( backpack_user()->role_id != config('backpack.role.ca_id') )
             abort(403);
     }
@@ -53,42 +53,51 @@ class OrdreCrudController extends CrudController
         $this->crud->denyAccess('update');
 
         //Filters
-        $this->crud->addFilter([
-            'type'  => 'simple',
-            'name'  => 'active',
-            'label' => 'Active'
-          ],
-          false,
-          function() { // if the filter is active
-            // $this->crud->addClause('active'); // apply the "active" eloquent scope
-          } );
+        // $this->crud->addFilter([
+        //     'type'  => 'simple',
+        //     'name'  => 'ODFs',
+        //     'label' => 'Les ODFs'
+        //   ],
+        //   false,
+        //   function() { // if the filter is active
+        //     $this->crud->addClause('where', 'type', '=', 'OF'); // apply the "active" eloquent scope
+        //   }
+        // );
 
         //Columns
-        CRUD::column('client');
+        CRUD::column('type');
+        CRUD::column('division')->type('relationship')->attribute('nom');
         CRUD::column('code_affaire');
-        CRUD::column('motif');
+        CRUD::column('numero_of');
+        CRUD::column('client');
+        //CRUD::column('motif');
         CRUD::column('date_envoi');
+        $this->crud->addColumn([
+            'name'     => 'statut',
+            'label'    => 'Statut',
+            'type'     => 'closure',
+            'function' => function($entry) {
+                if($entry->statut == 'En cours')
+                    return '<span class="badge badge-warning">'.$entry->statut.'</span>';
+                if($entry->statut == 'Accepte')
+                    return '<span class="badge badge-success">Accepté</span>';
+                if($entry->statut == 'Refuse')
+                    return '<span class="badge badge-danger">Refusé</span>';
+
+            }
+        ]);
         CRUD::column('date_accept');
         CRUD::column('date_refus');
-        CRUD::column('date_modification');
-        CRUD::column('justification');
-        CRUD::column('montant');
-        CRUD::column('montant_devise');
-        CRUD::column('numero_of');
-        CRUD::column('observation');
-        CRUD::column('refus');
-        CRUD::column('statut');
-        CRUD::column('type');
-        CRUD::column('ville');
-        CRUD::column('division_id');
-        CRUD::column('created_at');
-        CRUD::column('updated_at');
-        $this->crud->addColumn([   // view of Ordre file
-            'name' => 'ordre-file',
-            'label' => 'Ordre de facturation',
-            'type' => 'view',
-            'view' => 'ordre-file'
-        ]);
+        //CRUD::column('date_modification');
+        //CRUD::column('justification');
+        //CRUD::column('montant');
+        //CRUD::column('montant_devise');
+        //CRUD::column('observation');
+        //CRUD::column('refus');
+        //CRUD::column('ville');
+        //CRUD::column('division_id');
+        //CRUD::column('created_at');
+        //CRUD::column('updated_at');
 
         /**
          * Columns can be defined using the fluent syntax or array syntax:
@@ -101,6 +110,7 @@ class OrdreCrudController extends CrudController
     {
         $this->crud->set('show.setFromDb', false);
 
+        CRUD::column('type');
         CRUD::column('date_envoi');
         CRUD::column('division')->type('relationship')->attribute('nom');
         CRUD::column('numero_of');

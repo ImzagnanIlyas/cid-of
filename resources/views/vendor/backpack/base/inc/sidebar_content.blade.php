@@ -24,4 +24,5 @@
 <li class='nav-item'><a class='nav-link' href='{{ backpack_url('fae') }}'><i class='nav-icon la la-cart-arrow-down'></i> Factures à établir</a></li>
 <li class='nav-item'><a class='nav-link' href='{{ backpack_url('ordre') }}'><i class='nav-icon la la-question'></i> Ordres</a></li>
 <li class='nav-item'><a class='nav-link' href='{{ backpack_url('orj') }}'><i class='nav-icon la la-question'></i> Orjs</a></li>
+<li class='nav-item'><a class='nav-link' href='{{ backpack_url('facture') }}'><i class='nav-icon la la-question'></i> Factures</a></li>
 --}}

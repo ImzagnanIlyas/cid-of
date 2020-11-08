@@ -77,7 +77,20 @@ class FaeCrudController extends CrudController
         CRUD::column('client');
         CRUD::column('montant')->type('number')->decimals(2)->dec_point('.')->thousands_sep(' ');
         CRUD::column('observation');
-        CRUD::column('statut');
+        $this->crud->addColumn([
+            'name'     => 'statut',
+            'label'    => 'Statut',
+            'type'     => 'closure',
+            'function' => function($entry) {
+                if($entry->statut == 'En cours')
+                    return '<span class="badge badge-warning">'.$entry->statut.'</span>';
+                if($entry->statut == 'Accepte')
+                    return '<span class="badge badge-success">Accepté</span>';
+                if($entry->statut == 'Refuse')
+                    return '<span class="badge badge-danger">Refusé</span>';
+
+            }
+        ]);
         CRUD::column('date_accept');
         CRUD::column('date_envoi');
 

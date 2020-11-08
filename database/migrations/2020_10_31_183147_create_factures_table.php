@@ -16,7 +16,7 @@ class CreateFacturesTable extends Migration
         Schema::create('factures', function (Blueprint $table) {
             $table->id();
             $table->date('date_facturation');
-            $table->date('date_reception_client');
+            $table->date('date_reception_client')->nullable();
             $table->decimal('montant');
             $table->string('montant_devise');
             $table->string('numero_facture');
