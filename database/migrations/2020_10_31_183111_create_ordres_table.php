@@ -23,7 +23,7 @@ class CreateOrdresTable extends Migration
             $table->date('date_refus')->nullable();
             $table->date('date_modification')->nullable();
             $table->boolean('justification')->nullable();
-            $table->decimal('montant');
+            $table->double('montant');
             $table->string('montant_devise');
             $table->string('numero_of');
             $table->text('observation')->nullable();
