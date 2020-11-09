@@ -17,6 +17,15 @@
 <li class='nav-item'><a class='nav-link' href='{{ backpack_url('fae') }}'><i class='nav-icon la la-cart-arrow-down'></i> Factures à établir</a></li>
 <li class='nav-item'><a class='nav-link' href='{{ backpack_url('orj') }}'><i class='nav-icon la la-ban'></i>ODF/FAE rejetés</a></li>
 @endif
+@if( backpack_user()->role_id == config('backpack.role.cf_id') )
+<li class="nav-item nav-dropdown"><a class="nav-link nav-dropdown-toggle" href="#"><i class="nav-icon la la-lg la-plus"></i> Accepter/Rejeter</a>
+<ul class="nav-dropdown-items">
+    <li class="nav-item"><a class="nav-link" href="{{ backpack_url('of') }}"> Les ODFs en attente</a></li>
+    <li class="nav-item"><a class="nav-link" href="{{ backpack_url('fae') }}"> Les FAEs en attente</a></li>
+</ul>
+</li>
+<li class='nav-item'><a class='nav-link' href='{{ backpack_url('facture') }}'><i class='nav-icon la la-question'></i>Les Factures</a></li>
+@endif
 
 
 {{--

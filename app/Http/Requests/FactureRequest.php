@@ -27,6 +27,11 @@ class FactureRequest extends FormRequest
     {
         return [
             // 'name' => 'required|min:5|max:255'
+            'numero_facture' => 'required',
+            'montant' => 'required',
+            'montant_devise' => 'required',
+            'facture_file' => 'required',
+
         ];
     }
 

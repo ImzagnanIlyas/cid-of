@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Attachement;
+use App\Models\Facture;
 use Illuminate\Http\Request;
 
 class FilesController extends Controller
@@ -19,6 +20,9 @@ class FilesController extends Controller
                 ->get()
             );
         }else{
+            if ($ordre_context == 'facture') {
+                $ordre_id = Facture::findOrFail($ordre_id)->ordre_id;
+            }
             return response()->json(
                 Attachement::where([
                     ['context', '=', $ordre_context],

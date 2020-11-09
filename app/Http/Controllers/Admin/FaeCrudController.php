@@ -6,6 +6,8 @@ use App\Http\Requests\FaeRequest;
 use App\Models\Attachement;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
+use Backpack\CRUD\app\Library\Widget;
+use Illuminate\Support\Facades\Request;
 
 /**
  * Class FaeCrudController
@@ -29,7 +31,7 @@ class FaeCrudController extends CrudController
         CRUD::setModel(\App\Models\Fae::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/fae');
         CRUD::setEntityNameStrings('Facture à établir', 'Factures à établir');
-        if( backpack_user()->role_id != config('backpack.role.ca_id') )
+        if( backpack_user()->role_id == config('backpack.role.admin_id') )
             abort(403);
     }
 
@@ -37,6 +39,12 @@ class FaeCrudController extends CrudController
     {
         $this->crud->set('show.setFromDb', false);
 
+        if( backpack_user()->role_id == config('backpack.role.cf_id') )
+            Widget::add([
+                'type'        => 'view',
+                'view'        => 'cf-buttons',
+                'id'          =>  Request::segment(3),
+            ])->to('before_content');
         CRUD::column('date_envoi');
         CRUD::column('division')->type('relationship')->attribute('nom');
         CRUD::column('numero_of');
@@ -69,10 +77,19 @@ class FaeCrudController extends CrudController
     protected function setupListOperation()
     {
         //Custom Query
-        $this->crud->addClause('where', 'user_id', '=', backpack_user()->id);
+        if( backpack_user()->role_id == config('backpack.role.ca_id') )
+            $this->crud->addClause('where', 'user_id', '=', backpack_user()->id);
+        if( backpack_user()->role_id == config('backpack.role.cf_id') )
+            $this->crud->addClause('where', 'statut', '=', 'En cours');
+            //Remove add Button
+            $this->crud->denyAccess('create');
 
         //Columns
         CRUD::column('division')->type('relationship')->attribute('nom');
+        if( backpack_user()->role_id == config('backpack.role.cf_id') ){
+            CRUD::column('user')->type('relationship')->attribute('name');
+            CRUD::column('numero_of');
+        }
         CRUD::column('code_affaire');
         CRUD::column('client');
         CRUD::column('montant')->type('number')->decimals(2)->dec_point('.')->thousands_sep(' ');
@@ -91,7 +108,8 @@ class FaeCrudController extends CrudController
 
             }
         ]);
-        CRUD::column('date_accept');
+        if( backpack_user()->role_id == config('backpack.role.ca_id') )
+            CRUD::column('date_accept');
         CRUD::column('date_envoi');
 
         //Hide buttons
@@ -113,6 +131,11 @@ class FaeCrudController extends CrudController
      */
     protected function setupCreateOperation()
     {
+        if( backpack_user()->role_id == config('backpack.role.cf_id') )
+            $this->crud->denyAccess('create');
+        //Test access
+        $this->crud->hasAccessOrFail('create');
+
         CRUD::setValidation(FaeRequest::class);
 
         $this->crud->addField(

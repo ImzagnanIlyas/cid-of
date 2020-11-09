@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Requests\FactureRequest;
+use App\Models\Attachement;
 use App\Models\Ordre;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
@@ -15,7 +16,7 @@ use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 class FactureCrudController extends CrudController
 {
     use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
+    use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation { store as traitStore; }
     use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
@@ -55,6 +56,7 @@ class FactureCrudController extends CrudController
         CRUD::column('numero_facture');
         CRUD::column('client');
         CRUD::column('montant');
+        CRUD::column('montant_devise');
         CRUD::column('date_facturation');
         //CRUD::column('reception_client');
         $this->crud->addColumn([
@@ -70,6 +72,12 @@ class FactureCrudController extends CrudController
             }
         ]);
         CRUD::column('date_reception_client');
+        $this->crud->addColumn([   // view of Ordre file
+            'name' => 'facture-file',
+            'label' => 'Facture',
+            'type' => 'view',
+            'view' => 'ordre-file'
+        ]);
 
         // Remove action column
         $this->crud->removeButton( 'update' );
@@ -84,10 +92,18 @@ class FactureCrudController extends CrudController
      */
     protected function setupListOperation()
     {
+        //Custom Query
+        if( backpack_user()->role_id == config('backpack.role.cf_id') )
+            $this->crud->addClause('where', 'user_id', '=', backpack_user()->id);
+        if( backpack_user()->role_id == config('backpack.role.ca_id') ){
+            $ordres = Ordre::select('id')->where('user_id', backpack_user()->id)->get();
+            $this->crud->addClause('whereIn', 'ordre_id', $ordres);
+        }
+
         //Remove add Button
         $this->crud->denyAccess('create');
 
-        //filters
+        //filters :
 
         // dropdown filter
         $this->crud->addFilter([
@@ -195,13 +211,59 @@ class FactureCrudController extends CrudController
     {
         CRUD::setValidation(FactureRequest::class);
 
+        CRUD::field('numero_facture');
+        CRUD::field('montant')->type('number')->attributes(["step" => "any"])->wrapper(['class' => 'form-group col-md-6']);
+        CRUD::field('montant_devise')->wrapper(['class' => 'form-group col-md-6']);
+        $this->crud->addField(
+            [   // Upload
+                'name'      => 'facture_file',
+                'label'     => 'Facture (PDF)',
+                'type'      => 'upload',
+                'upload'    => true,
+                'disk'      => 'public',
+            ]
+        );
 
+
+        // hidden fields :
+        $request = $this->crud->getRequest();
+        CRUD::field('date_facturation')->type('hidden')->value(date('Y-m-d'));
+        CRUD::field('ordre_id')->type('hidden')->value($request->ordre_id);
+        CRUD::field('user_id')->type('hidden')->value(backpack_user()->id);
 
         /**
          * Fields can be defined using the fluent syntax or array syntax:
          * - CRUD::field('price')->type('number');
          * - CRUD::addField(['name' => 'price', 'type' => 'number']));
          */
+    }
+
+    public function store()
+    {
+        // do something befor save
+
+        $response = $this->traitStore();
+        // do something after save
+
+        $request = $this->crud->getRequest();
+
+        //Update Ordre
+        $ordre = Ordre::findOrFail($request->ordre_id);
+        $ordre->motif = NULL;
+        $ordre->date_accept = date('Y-m-d');
+        $ordre->date_refus = NULL;
+        $ordre->statut = 'Accepte';
+        $ordre->save();
+
+        //Save Facture file :
+        Attachement::create([
+            'type' => 'application/pdf',
+            'context' => 'facture',
+            'nom' => $request->file('facture_file')->storeAs('', $request->file('facture_file')->getClientOriginalName(), 'public'),
+            'ordre_id' => $request->ordre_id,
+        ]);
+
+        return $response;
     }
 
     /**
