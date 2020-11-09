@@ -10,7 +10,20 @@ class Facture extends Model
     use \Backpack\CRUD\app\Models\Traits\CrudTrait;
     use HasFactory;
 
+    protected $fillable = [
+        'numero_facture',
+        'montant',
+        'montant_devise',
+        'date_facturation',
+        'ordre_id',
+        'user_id',
+    ];
     protected $appends = ['division_name', 'client'];
+
+    public function user()
+    {
+        return $this->belongsTo('App\Models\User');
+    }
 
     public function ordre()
     {
