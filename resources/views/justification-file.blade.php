@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Request as FacadesRequest;
     <!-- here where the files will be added -->
 
     <!-- hidden inputs to exchanging data between php & js -->
+    <input type="text" name="ordre_context" value="{{ FacadesRequest::segment(2) }}"  hidden>
     <input type="text" name="ordre_id" value="{{ FacadesRequest::segment(3) }}"  hidden>
     <input type="text" name="justification_file_id" hidden>
 </ul>
@@ -16,8 +17,12 @@ use Illuminate\Support\Facades\Request as FacadesRequest;
 <script type="text/javascript">
 
     $(document).ready(function() {
-
-        let context = 'justification';
+        let context = $("input[name=ordre_context]").val();
+        if (context == 'facture') {
+            context = 'reception'
+        }else{
+            context = 'justification';
+        }
         let id = $("input[name=ordre_id]").val();
         let ids = [];
         $url_last_segment = $(location).attr('href').substring($(location).attr('href').lastIndexOf('/') + 1);

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Requests\FaeRequest;
 use App\Models\Attachement;
+use App\Models\Ordre;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 use Backpack\CRUD\app\Library\Widget;
@@ -39,12 +40,15 @@ class FaeCrudController extends CrudController
     {
         $this->crud->set('show.setFromDb', false);
 
-        if( backpack_user()->role_id == config('backpack.role.cf_id') )
-            Widget::add([
-                'type'        => 'view',
-                'view'        => 'cf-buttons',
-                'id'          =>  Request::segment(3),
-            ])->to('before_content');
+        if( backpack_user()->role_id == config('backpack.role.cf_id') ){
+            $ordre = Ordre::findOrFail(Request::segment(3));
+            if ($ordre->statut == 'En cours')
+                Widget::add([
+                    'type'        => 'view',
+                    'view'        => 'cf-buttons',
+                    'id'          =>  Request::segment(3),
+                ])->to('before_content');
+        }
         CRUD::column('date_envoi');
         CRUD::column('division')->type('relationship')->attribute('nom');
         CRUD::column('numero_of');
@@ -81,8 +85,9 @@ class FaeCrudController extends CrudController
             $this->crud->addClause('where', 'user_id', '=', backpack_user()->id);
         if( backpack_user()->role_id == config('backpack.role.cf_id') )
             $this->crud->addClause('where', 'statut', '=', 'En cours');
-            //Remove add Button
-            $this->crud->denyAccess('create');
+
+        //Remove add Button
+        $this->crud->denyAccess('create');
 
         //Columns
         CRUD::column('division')->type('relationship')->attribute('nom');
@@ -191,7 +196,7 @@ class FaeCrudController extends CrudController
         Attachement::create([
             'type' => 'application/pdf',
             'context' => 'fae',
-            'nom' => $request->file('fae')->storeAs('', $request->file('fae')->getClientOriginalName(), 'public'),
+            'nom' => $request->file('fae')->storeAs('', date('_dmY_His_').$request->file('fae')->getClientOriginalName(), 'public'),
             'ordre_id' => $this->crud->entry->id,
         ]);
         return $response;

@@ -22,7 +22,7 @@ class FilesController extends Controller
                 ->get()
             );
         }else{
-            if ($ordre_context == 'facture') {
+            if ($ordre_context == 'facture' || $ordre_context == 'reception') {
                 $ordre_id = Facture::findOrFail($ordre_id)->ordre_id;
             }
             return response()->json(

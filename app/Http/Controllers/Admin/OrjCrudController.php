@@ -192,7 +192,7 @@ class OrjCrudController extends CrudController
             Attachement::create([
                 'type' => 'application/pdf',
                 'context' => strtolower($ordre->type),
-                'nom' => $request->file('document')->storeAs('', $request->file('document')->getClientOriginalName(), 'public'),
+                'nom' => $request->file('document')->storeAs('', date('_dmY_His_').$request->file('document')->getClientOriginalName(), 'public'),
                 'ordre_id' => $this->crud->entry->id,
             ]);
         }
@@ -203,7 +203,7 @@ class OrjCrudController extends CrudController
                     Attachement::create([
                         'type' => 'application/pdf',
                         'context' => 'justification',
-                        'nom' => $file->storeAs('', $file->getClientOriginalName(), 'public'),
+                        'nom' => $file->storeAs('', date('_dmY_His_').$file->getClientOriginalName(), 'public'),
                         'ordre_id' => $this->crud->entry->id,
                     ]);
                 }

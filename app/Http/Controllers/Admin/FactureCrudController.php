@@ -8,6 +8,7 @@ use App\Models\Attachement;
 use App\Models\Ordre;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
+use Backpack\CRUD\app\Library\Widget;
 
 /**
  * Class FactureCrudController
@@ -32,7 +33,8 @@ class FactureCrudController extends CrudController
         CRUD::setModel(\App\Models\Facture::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/facture');
         if ($this->crud->getRequest()->accuser) {
-            CRUD::setEntityNameStrings('Accuser', 'Accuser');
+            CRUD::setEntityNameStrings('Accuser la réception', 'Accuser la réception');
+            $this->crud->addButtonFromModelFunction('line', 'accuser_reception', 'accuserReception', 'end');
         }else{
             CRUD::setEntityNameStrings('facture', 'factures');
         }
@@ -65,7 +67,12 @@ class FactureCrudController extends CrudController
         CRUD::column('montant');
         CRUD::column('montant_devise');
         CRUD::column('date_facturation');
-        //CRUD::column('reception_client');
+        $this->crud->addColumn([   // view of Ordre file
+            'name' => 'facture-file',
+            'label' => 'Facture',
+            'type' => 'view',
+            'view' => 'ordre-file'
+        ]);
         $this->crud->addColumn([
             'name'     => 'reception_client',
             'label'    => 'Réception client',
@@ -79,12 +86,13 @@ class FactureCrudController extends CrudController
             }
         ]);
         CRUD::column('date_reception_client');
-        $this->crud->addColumn([   // view of Ordre file
-            'name' => 'facture-file',
-            'label' => 'Facture',
+        $this->crud->addColumn([   // view of Reception file
+            'name' => 'reception-file',
+            'label' => 'Justification de reception',
             'type' => 'view',
-            'view' => 'ordre-file'
+            'view' => 'justification-file'
         ]);
+
 
         // Remove action column
         $this->crud->removeButton( 'update' );
@@ -204,8 +212,8 @@ class FactureCrudController extends CrudController
         //Hide buttons
         $this->crud->denyAccess('delete');
         $this->crud->denyAccess('update');
-        if ($this->crud->getRequest()->accuser)
-            $this->crud->allowAccess('update');
+        // if ($this->crud->getRequest()->accuser)
+        //     $this->crud->allowAccess('update');
 
         /**
          * Columns can be defined using the fluent syntax or array syntax:
@@ -222,8 +230,50 @@ class FactureCrudController extends CrudController
      */
     protected function setupCreateOperation()
     {
+        $request = $this->crud->getRequest();
+        $ordre = Ordre::findOrFail($request->ordre_id);
+        if($ordre->type == 'OF'){
+            $link = backpack_url("of/".$ordre->id."/show");
+        }
+        if($ordre->type == 'FAE'){
+            $link = backpack_url("fae/".$ordre->id."/show");
+        }
+
         CRUD::setValidation(StoreRequest::class);
 
+        // Alerts :
+        Widget::add([
+            'type'    => 'div',
+            'class'   => 'row',
+            'content' => [ // widgets
+                [
+                    'type'    => 'div',
+                    'class'   => 'col-md-6',
+                    'content' => [ // widgets
+                        [
+                            'type'         => 'alert',
+                            'class'        => 'alert alert-danger',
+                            'heading'      => 'Une information important!',
+                            'content'      => "Si vous n'enregistrez pas cette facture, l'ODF/FAE ne sera pas être accepté.",
+                            'close_button' => true,
+                        ]
+                    ]
+                ],
+                [
+                    'type'    => 'div',
+                    'class'   => 'col-md-6',
+                    'content' => [ // widgets
+                        [
+                            'type'         => 'alert',
+                            'class'        => 'alert alert-primary',
+                            'heading'      => 'ODF/FAE lié',
+                            'content'      => 'Cette facture est pour l\'ODF/FAE de numéro <a class="text-white" target="_blank" href="'.$link.'">'.$ordre->numero_of.'</a>',
+                            'close_button' => true,
+                        ]
+                    ]
+                ],
+            ]
+        ]);
         CRUD::field('numero_facture');
         CRUD::field('montant')->type('number')->attributes(["step" => "any"])->wrapper(['class' => 'form-group col-md-6']);
         CRUD::field('montant_devise')->wrapper(['class' => 'form-group col-md-6']);
@@ -239,10 +289,12 @@ class FactureCrudController extends CrudController
 
 
         // hidden fields :
-        $request = $this->crud->getRequest();
         CRUD::field('date_facturation')->type('hidden')->value(date('Y-m-d'));
         CRUD::field('ordre_id')->type('hidden')->value($request->ordre_id);
         CRUD::field('user_id')->type('hidden')->value(backpack_user()->id);
+
+        // remove choice from save action :
+        $this->crud->removeSaveActions(['save_and_back','save_and_edit', 'save_and_new']);
 
         /**
          * Fields can be defined using the fluent syntax or array syntax:
@@ -272,7 +324,7 @@ class FactureCrudController extends CrudController
         Attachement::create([
             'type' => 'application/pdf',
             'context' => 'facture',
-            'nom' => $request->file('facture_file')->storeAs('', $request->file('facture_file')->getClientOriginalName(), 'public'),
+            'nom' => $request->file('facture_file')->storeAs('', date('_dmY_His_').$request->file('facture_file')->getClientOriginalName(), 'public'),
             'ordre_id' => $request->ordre_id,
         ]);
 
@@ -303,6 +355,7 @@ class FactureCrudController extends CrudController
         // hidden fields :
         CRUD::field('reception_client')->type('hidden')->value(1);
 
+        // remove choice from save action :
         $this->crud->removeSaveActions(['save_and_back','save_and_edit', 'save_and_new']);
     }
 
@@ -318,8 +371,10 @@ class FactureCrudController extends CrudController
         Attachement::create([
             'type' => 'application/pdf',
             'context' => 'reception',
-            'nom' => $request->file('reception_file')->storeAs('', $request->file('reception_file')->getClientOriginalName(), 'public'),
+            'nom' => $request->file('reception_file')->storeAs('', date('_dmY_His_').$request->file('reception_file')->getClientOriginalName(), 'public'),
             'ordre_id' => $this->crud->entry->ordre_id,
         ]);
+
+        return $response;
     }
 }

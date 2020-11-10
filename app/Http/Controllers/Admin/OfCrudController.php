@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Requests\CreateOfRequest as StoreRequest;
 use App\Http\Requests\UpdateOfRequest as UpdateRequest;
 use App\Models\Attachement;
+use App\Models\Ordre;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 use Backpack\CRUD\app\Library\Widget;
@@ -42,12 +43,16 @@ class OfCrudController extends CrudController
     {
         $this->crud->set('show.setFromDb', false);
 
-        if( backpack_user()->role_id == config('backpack.role.cf_id') )
-            Widget::add([
-                'type'        => 'view',
-                'view'        => 'cf-buttons',
-                'id'          =>  Request::segment(3),
-            ])->to('before_content');
+        // Accpeter/Rejeter buttons
+        if( backpack_user()->role_id == config('backpack.role.cf_id') ){
+            $ordre = Ordre::findOrFail(Request::segment(3));
+            if ($ordre->statut == 'En cours')
+                Widget::add([
+                    'type'        => 'view',
+                    'view'        => 'cf-buttons',
+                    'id'          =>  Request::segment(3),
+                ])->to('before_content');
+        }
         CRUD::column('date_envoi');
         CRUD::column('division')->type('relationship')->attribute('nom');
         CRUD::column('ville');
@@ -92,8 +97,9 @@ class OfCrudController extends CrudController
             $this->crud->addClause('where', 'user_id', '=', backpack_user()->id);
         if( backpack_user()->role_id == config('backpack.role.cf_id') )
             $this->crud->addClause('where', 'statut', '=', 'En cours');
-            //Remove add Button
-            $this->crud->denyAccess('create');
+
+        //Remove add Button
+        $this->crud->denyAccess('create');
 
         //Columns
         CRUD::column('division')->type('relationship')->attribute('nom');
@@ -212,7 +218,7 @@ class OfCrudController extends CrudController
         Attachement::create([
             'type' => 'application/pdf',
             'context' => 'of',
-            'nom' => $request->file('of')->storeAs('', $request->file('of')->getClientOriginalName(), 'public'),
+            'nom' => $request->file('of')->storeAs('', date('_dmY_His_').$request->file('of')->getClientOriginalName(), 'public'),
             'ordre_id' => $this->crud->entry->id,
         ]);
         //Save Justification files :
@@ -221,7 +227,7 @@ class OfCrudController extends CrudController
                 Attachement::create([
                     'type' => 'application/pdf',
                     'context' => 'justification',
-                    'nom' => $file->storeAs('', $file->getClientOriginalName(), 'public'),
+                    'nom' => $file->storeAs('', date('_dmY_His_').$file->getClientOriginalName(), 'public'),
                     'ordre_id' => $this->crud->entry->id,
                 ]);
             }
@@ -316,7 +322,7 @@ class OfCrudController extends CrudController
             Attachement::create([
                 'type' => 'application/pdf',
                 'context' => 'of',
-                'nom' => $request->file('of')->storeAs('', $request->file('of')->getClientOriginalName(), 'public'),
+                'nom' => $request->file('of')->storeAs('', date('_dmY_His_').$request->file('of')->getClientOriginalName(), 'public'),
                 'ordre_id' => $this->crud->entry->id,
             ]);
         }
@@ -326,7 +332,7 @@ class OfCrudController extends CrudController
                 Attachement::create([
                     'type' => 'application/pdf',
                     'context' => 'justification',
-                    'nom' => $file->storeAs('', $file->getClientOriginalName(), 'public'),
+                    'nom' => $file->storeAs('', date('_dmY_His_').$file->getClientOriginalName(), 'public'),
                     'ordre_id' => $this->crud->entry->id,
                 ]);
             }

@@ -28,7 +28,7 @@ class HistoriqueCrudController extends CrudController
     {
         CRUD::setModel(\App\Models\Historique::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/historique');
-        CRUD::setEntityNameStrings('historique', 'historiques');
+        CRUD::setEntityNameStrings('historique', 'Historiques des refus');
     }
 
     /**
@@ -52,12 +52,20 @@ class HistoriqueCrudController extends CrudController
             'model'     => 'App\Models\Ordre', // foreign key model
          ]);
         $this->crud->addColumn([
-            'label'     => 'Numéro', // Table column heading
-            'name'      => 'ordre', // the column that contains the ID of that connected entity;
-            'key'       => 'numero_of', // the column that contains the ID of that connected entity;
-            'entity'    => 'ordre', // the method that defines the relationship in your Model
-            'attribute' => 'numero_of', // foreign key attribute that is shown to user
-            'model'     => 'App\Models\Ordre', // foreign key model
+            'name'     => 'type',
+            'label'    => 'Numéro ODF/FAE',
+            'type'     => 'closure',
+            'function' => function($entry) {
+                $ordre = $entry->ordre;
+                if($ordre->type == 'OF'){
+                    $link = backpack_url("of/".$ordre->id."/show");
+                    return '<a href="'.$link.'">'.$ordre->numero_of.'</a>';
+                }
+                if($ordre->type == 'FAE'){
+                    $link = backpack_url("fae/".$ordre->id."/show");
+                    return '<a href="'.$link.'">'.$ordre->numero_of.'</a>';
+                }
+            }
         ]);
         $this->crud->addColumn([
             'label'     => 'Code affaire', // Table column heading

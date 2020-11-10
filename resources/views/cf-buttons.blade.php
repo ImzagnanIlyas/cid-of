@@ -35,7 +35,7 @@
         .then((value) => {
             if (value) {
                 $.ajax({
-                    url: '/regeter',
+                    url: '/regeter5',
                     type: "POST",
                     data:{
                         ordre_id:id,
@@ -45,13 +45,20 @@
                     success: function(response) {
                         if(response) {
                             window.location.replace(url);
-                        }else{
-                            swal("Mablanch");
                         }
+                    },
+                    error: function(response){
+                        swal({
+                            icon: "error",
+                            text: "Une erreur s'est produite",
+                            dangerMode: true,
+                        });
                     }
                 });
             } else {
-                swal("Your imaginary file is safe!");
+                if (value == '') {
+                    swal("Veuillez remplir le champ");
+                }
             }
         });
     }

@@ -1,6 +1,7 @@
 @extends(backpack_view('blank'))
 
 @php
+if( backpack_user()->role_id == config('backpack.role.ca_id') ){
     $widgets['after_content'][] = [
         'type'    => 'div',
         'class'   => 'row',
@@ -71,10 +72,20 @@
         $ordre2 = 0;
         $ordre3 = 0;
     }
+}else{
+    $widgets['before_content'][] = [
+        'type'        => 'jumbotron',
+        'heading'     => trans('backpack::base.welcome'),
+        'content'     => trans('backpack::base.use_sidebar'),
+        'button_link' => backpack_url('logout'),
+        'button_text' => trans('backpack::base.logout'),
+    ];
+}
 
 @endphp
 
 @section('content')
+@if( backpack_user()->role_id == config('backpack.role.ca_id') )
     <div class="row">
         <div class="col-6 col-lg-6">
         <div class="card">
@@ -214,4 +225,5 @@
         </div>
         <!-- /.col-->
     </div>
+@endif
 @endsection

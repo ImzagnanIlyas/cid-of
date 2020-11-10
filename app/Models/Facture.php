@@ -39,4 +39,9 @@ class Facture extends Model
     function getClientAttribute() {
         return $this->ordre->client;
     }
+
+    public function accuserReception($crud = false)
+    {
+        return '<a class="btn btn-sm btn-link" href="'.backpack_url('facture').'/'.$this->id.'/edit"><i class="la la-thumbs-up"></i> Accuser la réception</a>';
+    }
 }

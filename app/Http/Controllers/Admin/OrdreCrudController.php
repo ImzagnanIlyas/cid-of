@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Requests\OrdreRequest;
 use App\Models\Attachement;
+use App\Models\Facture;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 
@@ -29,8 +30,12 @@ class OrdreCrudController extends CrudController
     {
         CRUD::setModel(\App\Models\Ordre::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/ordre');
-        CRUD::setEntityNameStrings('ODF/FAE', 'Les ODFs/FAEs');
-        if( backpack_user()->role_id != config('backpack.role.ca_id') )
+        if( backpack_user()->role_id == config('backpack.role.cf_id') ){
+            CRUD::setEntityNameStrings('ODF/FAE', 'Historiques des admissions');
+        }else{
+            CRUD::setEntityNameStrings('ODF/FAE', 'Les ODFs/FAEs');
+        }
+        if( backpack_user()->role_id == config('backpack.role.admin_id') )
             abort(403);
     }
 
@@ -43,7 +48,13 @@ class OrdreCrudController extends CrudController
     protected function setupListOperation()
     {
         //Custom Query
-        $this->crud->addClause('where', 'user_id', '=', backpack_user()->id);
+        if( backpack_user()->role_id == config('backpack.role.ca_id') )
+            $this->crud->addClause('where', 'user_id', '=', backpack_user()->id);
+        if( backpack_user()->role_id == config('backpack.role.cf_id') ){
+            $this->crud->addClause('where', 'statut', '=', 'Accepte');
+            $ids = Facture::select('ordre_id')->where('user_id', backpack_user()->id);
+            $this->crud->addClause('whereIn', 'id', $ids);
+        }
 
         //Remove add Button
         $this->crud->denyAccess('create');
