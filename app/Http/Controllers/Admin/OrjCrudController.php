@@ -165,6 +165,13 @@ class OrjCrudController extends CrudController
                 'view' => 'justification-file'
             ]);
         }
+
+        // hidden fields :
+        CRUD::field('date_modification')->type('hidden')->value(date('Y-m-d'));
+        CRUD::field('motif')->type('hidden')->value('');
+        CRUD::field('date_refus')->type('hidden')->value('');
+        CRUD::field('refus')->type('hidden')->value(0);
+        CRUD::field('statut')->type('hidden')->value('En cours');
     }
 
     public function update($id)

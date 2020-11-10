@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\OrdreCrudController;
 use App\Http\Controllers\FilesController;
 use Illuminate\Support\Facades\Route;
 
@@ -20,3 +21,4 @@ Route::get('/', function () {
 
 Route::get('get-file', [FilesController::class,'getFile']); //return Attachements list
 Route::get('download/{path}', [FilesController::class,'download']); //return download  link of file
+Route::post('regeter', [FilesController::class,'rejeter']); //regter un ordre

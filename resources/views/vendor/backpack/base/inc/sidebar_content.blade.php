@@ -25,6 +25,8 @@
 </ul>
 </li>
 <li class='nav-item'><a class='nav-link' href='{{ backpack_url('facture') }}'><i class='nav-icon la la-question'></i>Les Factures</a></li>
+<li class='nav-item'><a class='nav-link' href='{{ backpack_url('facture').'?accuser=1' }}'><i class='nav-icon la la-question'></i> Accuser la reception</a></li>
+<li class='nav-item'><a class='nav-link' href='{{ backpack_url('historique') }}'><i class='nav-icon la la-question'></i> Historiques</a></li>
 @endif
 
 

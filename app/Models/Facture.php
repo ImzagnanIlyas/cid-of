@@ -15,6 +15,8 @@ class Facture extends Model
         'montant',
         'montant_devise',
         'date_facturation',
+        'date_reception_client',
+        'reception_client',
         'ordre_id',
         'user_id',
     ];

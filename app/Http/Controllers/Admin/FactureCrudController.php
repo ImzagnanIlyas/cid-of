@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Requests\FactureRequest;
+use App\Http\Requests\CreateFactureRequest as StoreRequest;
+use App\Http\Requests\UpdateFactureRequest as UpdateRequest;
 use App\Models\Attachement;
 use App\Models\Ordre;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
@@ -17,7 +18,7 @@ class FactureCrudController extends CrudController
 {
     use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation { store as traitStore; }
-    use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
+    use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation { update as traitUpdate; }
     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
 
@@ -30,7 +31,11 @@ class FactureCrudController extends CrudController
     {
         CRUD::setModel(\App\Models\Facture::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/facture');
-        CRUD::setEntityNameStrings('facture', 'factures');
+        if ($this->crud->getRequest()->accuser) {
+            CRUD::setEntityNameStrings('Accuser', 'Accuser');
+        }else{
+            CRUD::setEntityNameStrings('facture', 'factures');
+        }
     }
 
     protected function setupShowOperation()
@@ -45,12 +50,14 @@ class FactureCrudController extends CrudController
             'type'     => 'closure',
             'function' => function($entry) {
                 $ordre = $entry->ordre;
-                if($ordre->type == 'OF')
+                if($ordre->type == 'OF'){
                     $link = backpack_url("of/".$ordre->id."/show");
                     return '<a href="'.$link.'">'.$ordre->numero_of.'</a>';
-                if($ordre->type == 'FAE')
-                $link = backpack_url("fae/".$ordre->id."/show");
-                return '<a href="'.$link.'">'.$ordre->numero_of.'</a>';
+                }
+                if($ordre->type == 'FAE'){
+                    $link = backpack_url("fae/".$ordre->id."/show");
+                    return '<a href="'.$link.'">'.$ordre->numero_of.'</a>';
+                }
             }
         ]);
         CRUD::column('numero_facture');
@@ -95,6 +102,8 @@ class FactureCrudController extends CrudController
         //Custom Query
         if( backpack_user()->role_id == config('backpack.role.cf_id') )
             $this->crud->addClause('where', 'user_id', '=', backpack_user()->id);
+            if ($this->crud->getRequest()->accuser)
+                $this->crud->addClause('where', 'reception_client', 0);
         if( backpack_user()->role_id == config('backpack.role.ca_id') ){
             $ordres = Ordre::select('id')->where('user_id', backpack_user()->id)->get();
             $this->crud->addClause('whereIn', 'ordre_id', $ordres);
@@ -120,7 +129,7 @@ class FactureCrudController extends CrudController
         });
 
         // date filter
-         $this->crud->addFilter([
+        $this->crud->addFilter([
             'type'  => 'date',
             'name'  => 'filter_date_facturation',
             'label' => 'Date de facturation'
@@ -163,12 +172,14 @@ class FactureCrudController extends CrudController
             'type'     => 'closure',
             'function' => function($entry) {
                 $ordre = $entry->ordre;
-                if($ordre->type == 'OF')
+                if($ordre->type == 'OF'){
                     $link = backpack_url("of/".$ordre->id."/show");
                     return '<a href="'.$link.'">'.$ordre->numero_of.'</a>';
-                if($ordre->type == 'FAE')
-                $link = backpack_url("fae/".$ordre->id."/show");
-                return '<a href="'.$link.'">'.$ordre->numero_of.'</a>';
+                }
+                if($ordre->type == 'FAE'){
+                    $link = backpack_url("fae/".$ordre->id."/show");
+                    return '<a href="'.$link.'">'.$ordre->numero_of.'</a>';
+                }
             }
         ]);
         CRUD::column('numero_facture');
@@ -193,6 +204,8 @@ class FactureCrudController extends CrudController
         //Hide buttons
         $this->crud->denyAccess('delete');
         $this->crud->denyAccess('update');
+        if ($this->crud->getRequest()->accuser)
+            $this->crud->allowAccess('update');
 
         /**
          * Columns can be defined using the fluent syntax or array syntax:
@@ -209,7 +222,7 @@ class FactureCrudController extends CrudController
      */
     protected function setupCreateOperation()
     {
-        CRUD::setValidation(FactureRequest::class);
+        CRUD::setValidation(StoreRequest::class);
 
         CRUD::field('numero_facture');
         CRUD::field('montant')->type('number')->attributes(["step" => "any"])->wrapper(['class' => 'form-group col-md-6']);
@@ -274,6 +287,39 @@ class FactureCrudController extends CrudController
      */
     protected function setupUpdateOperation()
     {
-        $this->setupCreateOperation();
+        CRUD::setValidation(UpdateRequest::class);
+
+        CRUD::field('date_reception_client')->type('date_picker');
+        $this->crud->addField(
+            [   // Upload
+                'name'      => 'reception_file',
+                'label'     => 'Justification de reception (PDF)',
+                'type'      => 'upload',
+                'upload'    => true,
+                'disk'      => 'public',
+            ]
+        );
+
+        // hidden fields :
+        CRUD::field('reception_client')->type('hidden')->value(1);
+
+        $this->crud->removeSaveActions(['save_and_back','save_and_edit', 'save_and_new']);
+    }
+
+    public function update()
+    {
+        // do something befor save
+
+        $response = $this->traitUpdate();
+        // do something after save
+
+        $request = $this->crud->getRequest();
+
+        Attachement::create([
+            'type' => 'application/pdf',
+            'context' => 'reception',
+            'nom' => $request->file('reception_file')->storeAs('', $request->file('reception_file')->getClientOriginalName(), 'public'),
+            'ordre_id' => $this->crud->entry->ordre_id,
+        ]);
     }
 }

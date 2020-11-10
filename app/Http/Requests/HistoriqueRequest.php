@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use App\Http\Requests\Request;
 use Illuminate\Foundation\Http\FormRequest;
 
-class FactureRequest extends FormRequest
+class HistoriqueRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -27,11 +27,6 @@ class FactureRequest extends FormRequest
     {
         return [
             // 'name' => 'required|min:5|max:255'
-            'numero_facture' => 'required',
-            'montant' => 'required',
-            'montant_devise' => 'required',
-            'facture_file' => 'required',
-
         ];
     }
 
