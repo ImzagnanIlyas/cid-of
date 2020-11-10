@@ -16,7 +16,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+
+    return redirect('/CID');
 });
 
 Route::get('get-file', [FilesController::class,'getFile']); //return Attachements list
