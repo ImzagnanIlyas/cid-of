@@ -62,8 +62,6 @@ class OfCrudController extends CrudController
         CRUD::column('observation');
         CRUD::column('montant')->type('number')->decimals(2)->dec_point('.')->thousands_sep(' ');
         CRUD::column('montant_devise');
-        CRUD::column('statut');
-        CRUD::column('date_accept');
         $this->crud->addColumn([   // view of Ordre file
             'name' => 'ordre-file',
             'label' => 'Ordre de facturation',
@@ -75,6 +73,46 @@ class OfCrudController extends CrudController
             'label' => 'Justification(s)',
             'type' => 'view',
             'view' => 'justification-file'
+        ]);
+        $this->crud->addColumn([
+            'name'     => 'statut',
+            'label'    => 'Statut',
+            'type'     => 'closure',
+            'function' => function($entry) {
+                if($entry->statut == 'En cours')
+                    return '<span class="badge badge-warning">'.$entry->statut.'</span>';
+                if($entry->statut == 'Accepte')
+                    return '<span class="badge badge-success">Accepté</span>';
+                if($entry->statut == 'Refuse')
+                    return '<span class="badge badge-danger">Refusé</span>';
+
+            }
+        ]);
+        CRUD::column('date_accept');
+        $this->crud->addColumn([
+            'name'     => 'cf_name',
+            'label'    => 'Nom du CF',
+            'type'     => 'closure',
+            'function' => function($entry) {
+                $ordre = Ordre::findOrFail($entry->id);
+                if($ordre->facture){
+                    return $ordre->facture->user->name;
+                }
+            }
+        ]);
+        $this->crud->addColumn([
+            'name'     => 'facture',
+            'label'    => 'Facture',
+            'type'     => 'closure',
+            'function' => function($entry) {
+                $ordre = Ordre::findOrFail($entry->id);
+                if($ordre->facture){
+                    $link = backpack_url("facture/".$ordre->facture->id."/show");
+                    return '<a target="_blank" href="'.$link.'">'.$ordre->facture->numero_facture.' <i class="la la-external-link"></i></a>';
+                }else{
+
+                }
+            }
         ]);
 
         // Remove action column
@@ -100,6 +138,27 @@ class OfCrudController extends CrudController
 
         //Remove add Button
         $this->crud->denyAccess('create');
+
+        //Filters
+
+        // dropdown filter
+        $this->crud->addFilter([
+            'name'  => 'statut_filter',
+            'type'  => 'dropdown',
+            'label' => 'Statut'
+        ], [
+            1 => 'En cours',
+            2 => 'Accepté',
+            3 => 'Refusé',
+        ], function($value) { // if the filter is active
+            if ($value == 1) {
+                $this->crud->addClause('where', 'statut', 'En cours');
+            }elseif ($value == 2) {
+                $this->crud->addClause('where', 'statut', 'Accepte');
+            }elseif ($value == 3) {
+                $this->crud->addClause('where', 'statut', 'Refuse');
+            }
+        });
 
         //Columns
         CRUD::column('division')->type('relationship')->attribute('nom');

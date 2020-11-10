@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Requests\OrdreRequest;
 use App\Models\Attachement;
 use App\Models\Facture;
+use App\Models\Ordre;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
+use Illuminate\Support\Facades\Request;
 
 /**
  * Class OrdreCrudController
@@ -64,16 +66,36 @@ class OrdreCrudController extends CrudController
         $this->crud->denyAccess('update');
 
         //Filters
-        // $this->crud->addFilter([
-        //     'type'  => 'simple',
-        //     'name'  => 'ODFs',
-        //     'label' => 'Les ODFs'
-        //   ],
-        //   false,
-        //   function() { // if the filter is active
-        //     $this->crud->addClause('where', 'type', '=', 'OF'); // apply the "active" eloquent scope
-        //   }
-        // );
+
+        // dropdown filter
+        $this->crud->addFilter([
+            'name'  => 'type_filter',
+            'type'  => 'dropdown',
+            'label' => 'Type'
+        ], [
+            1 => 'ODFs',
+            2 => 'FAEs',
+        ], function($value) { // if the filter is active
+            $this->crud->addClause('where', 'type', ($value == 1) ? 'OF' : 'FAE');
+        });
+        // dropdown filter
+        $this->crud->addFilter([
+            'name'  => 'statut_filter',
+            'type'  => 'dropdown',
+            'label' => 'Statut'
+        ], [
+            1 => 'En cours',
+            2 => 'Accepté',
+            3 => 'Refusé',
+        ], function($value) { // if the filter is active
+            if ($value == 1) {
+                $this->crud->addClause('where', 'statut', 'En cours');
+            }elseif ($value == 2) {
+                $this->crud->addClause('where', 'statut', 'Accepte');
+            }elseif ($value == 3) {
+                $this->crud->addClause('where', 'statut', 'Refuse');
+            }
+        });
 
         //Columns
         CRUD::column('type');
@@ -120,6 +142,7 @@ class OrdreCrudController extends CrudController
     protected function setupShowOperation()
     {
         $this->crud->set('show.setFromDb', false);
+        $ordre = Ordre::findOrFail(Request::segment(3));
 
         CRUD::column('type');
         CRUD::column('date_envoi');
@@ -130,13 +153,64 @@ class OrdreCrudController extends CrudController
         CRUD::column('observation');
         CRUD::column('montant')->type('number')->decimals(2)->dec_point('.')->thousands_sep(' ');
         CRUD::column('montant_devise');
-        CRUD::column('statut');
+        if ($ordre->type == 'OF'){
+            $this->crud->addColumn([   // view of Ordre file
+                'name' => 'ordre-file',
+                'label' => 'Ordre de facturation',
+                'type' => 'view',
+                'view' => 'ordre-file'
+            ]);
+            $this->crud->addColumn([   // view of Justification files list
+                'name' => 'justification-file',
+                'label' => 'Justification(s)',
+                'type' => 'view',
+                'view' => 'justification-file'
+            ]);
+        }elseif ($ordre->type == 'FAE') {
+            $this->crud->addColumn([   // view of Ordre file
+                'name' => 'ordre-file',
+                'label' => 'Facture à établir',
+                'type' => 'view',
+                'view' => 'ordre-file'
+            ]);
+        }
+        $this->crud->addColumn([
+            'name'     => 'statut',
+            'label'    => 'Statut',
+            'type'     => 'closure',
+            'function' => function($entry) {
+                if($entry->statut == 'En cours')
+                    return '<span class="badge badge-warning">'.$entry->statut.'</span>';
+                if($entry->statut == 'Accepte')
+                    return '<span class="badge badge-success">Accepté</span>';
+                if($entry->statut == 'Refuse')
+                    return '<span class="badge badge-danger">Refusé</span>';
+
+            }
+        ]);
         CRUD::column('date_accept');
-        $this->crud->addColumn([   // view of Ordre file
-            'name' => 'ordre-file',
-            'label' => 'Ordre de facturation',
-            'type' => 'view',
-            'view' => 'ordre-file'
+        $this->crud->addColumn([
+            'name'     => 'cf_name',
+            'label'    => 'Nom du CF',
+            'type'     => 'closure',
+            'function' => function($entry) {
+                $ordre = Ordre::findOrFail($entry->id);
+                if($ordre->facture){
+                    return $ordre->facture->user->name;
+                }
+            }
+        ]);
+        $this->crud->addColumn([
+            'name'     => 'facture',
+            'label'    => 'Facture',
+            'type'     => 'closure',
+            'function' => function($entry) {
+                $ordre = Ordre::findOrFail($entry->id);
+                if($ordre->facture){
+                    $link = backpack_url("facture/".$ordre->facture->id."/show");
+                    return '<a target="_blank" href="'.$link.'">'.$ordre->facture->numero_facture.' <i class="la la-external-link"></i></a>';
+                }
+            }
         ]);
 
         // Remove action column

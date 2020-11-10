@@ -35,7 +35,7 @@
         .then((value) => {
             if (value) {
                 $.ajax({
-                    url: '/regeter5',
+                    url: '/regeter',
                     type: "POST",
                     data:{
                         ordre_id:id,

@@ -52,12 +52,34 @@ class OrjCrudController extends CrudController
 
         //Columns
         CRUD::column('division')->type('relationship')->attribute('nom');
+        $this->crud->addColumn([
+            'name'     => 'cf_name',
+            'label'    => 'Nom du CF',
+            'type'     => 'closure',
+            'function' => function($entry) {
+                $ordre = Ordre::findOrFail($entry->id);
+                return $ordre->historiques->last()->user->name;
+            }
+        ]);
+        $this->crud->addColumn([
+            'name'     => 'type',
+            'label'    => 'Numéro ODF/FAE',
+            'type'     => 'closure',
+            'function' => function($entry) {
+                $ordre = $entry;
+                if($ordre->type == 'OF'){
+                    $link = backpack_url("of/".$ordre->id."/show");
+                    return '<a target="_blank" href="'.$link.'">'.$ordre->numero_of.' <i class="la la-external-link"></i></a>';
+                }
+                if($ordre->type == 'FAE'){
+                    $link = backpack_url("fae/".$ordre->id."/show");
+                    return '<a target="_blank" href="'.$link.'">'.$ordre->numero_of.' <i class="la la-external-link"></i></a>';
+                }
+            }
+        ]);
         CRUD::column('date_envoi');
-        CRUD::column('numero_of');
-        CRUD::column('code_affaire');
-        CRUD::column('client');
-        CRUD::column('motif')->limit(10);
         CRUD::column('date_refus');
+        CRUD::column('motif')->limit(1000000);
 
         //Hide buttons
         $this->crud->denyAccess('delete');

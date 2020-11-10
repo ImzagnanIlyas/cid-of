@@ -53,4 +53,9 @@ class Ordre extends Model
     {
         return $this->hasMany('App\Models\Attachement');
     }
+
+    public function historiques()
+    {
+        return $this->hasMany('App\Models\Historique');
+    }
 }

@@ -54,11 +54,11 @@ class FactureCrudController extends CrudController
                 $ordre = $entry->ordre;
                 if($ordre->type == 'OF'){
                     $link = backpack_url("of/".$ordre->id."/show");
-                    return '<a href="'.$link.'">'.$ordre->numero_of.'</a>';
+                    return '<a href="'.$link.'">'.$ordre->numero_of.' <i class="la la-external-link"></i></a>';
                 }
                 if($ordre->type == 'FAE'){
                     $link = backpack_url("fae/".$ordre->id."/show");
-                    return '<a href="'.$link.'">'.$ordre->numero_of.'</a>';
+                    return '<a href="'.$link.'">'.$ordre->numero_of.' <i class="la la-external-link"></i></a>';
                 }
             }
         ]);
@@ -182,11 +182,11 @@ class FactureCrudController extends CrudController
                 $ordre = $entry->ordre;
                 if($ordre->type == 'OF'){
                     $link = backpack_url("of/".$ordre->id."/show");
-                    return '<a href="'.$link.'">'.$ordre->numero_of.'</a>';
+                    return '<a href="'.$link.'">'.$ordre->numero_of.' <i class="la la-external-link"></i></a>';
                 }
                 if($ordre->type == 'FAE'){
                     $link = backpack_url("fae/".$ordre->id."/show");
-                    return '<a href="'.$link.'">'.$ordre->numero_of.'</a>';
+                    return '<a href="'.$link.'">'.$ordre->numero_of.' <i class="la la-external-link"></i></a>';
                 }
             }
         ]);
@@ -267,7 +267,7 @@ class FactureCrudController extends CrudController
                             'type'         => 'alert',
                             'class'        => 'alert alert-primary',
                             'heading'      => 'ODF/FAE lié',
-                            'content'      => 'Cette facture est pour l\'ODF/FAE de numéro <a class="text-white" target="_blank" href="'.$link.'">'.$ordre->numero_of.'</a>',
+                            'content'      => 'Cette facture est pour l\'ODF/FAE de numéro <a class="text-white" target="_blank" href="'.$link.'">'.$ordre->numero_of.' <i class="la la-external-link"></i></a>',
                             'close_button' => true,
                         ]
                     ]

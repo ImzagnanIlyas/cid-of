@@ -33,15 +33,19 @@ use Illuminate\Support\Facades\Request as FacadesRequest;
             type: "GET",
             success: function(response) {
                 if(response) {
-                    console.log(response);
-                    for (let index = 0; index < response.length; index++) {
-                        const element = response[index];
-                        if ($url_last_segment == 'show'){
-                            $("ul[role=justification-file]").append('<li class="list-group-item d-flex list-group-item-action justify-content-between align-items-center" role="justification_file'+element.id+'"><a href="/download/'+btoa(element.nom)+'">'+element.nom+'</a></li>');
-                        }else{
-                            $("ul[role=justification-file]").append('<li class="list-group-item d-flex list-group-item-action justify-content-between align-items-center" role="justification_file'+element.id+'"><a href="/download/'+btoa(element.nom)+'">'+element.nom+'</a><button class="btn btn-pill btn-danger" type="button"  id="'+element.id+'"><i class="la la-trash"></i></button></li>');
+                    if (response.length) {
+                        for (let index = 0; index < response.length; index++) {
+                            const element = response[index];
+                            if ($url_last_segment == 'show'){
+                                $("ul[role=justification-file]").append('<li class="list-group-item d-flex list-group-item-action justify-content-between align-items-center" role="justification_file'+element.id+'"><a href="/download/'+btoa(element.nom)+'">'+element.nom+' <i class="la la-external-link"></i></a></li>');
+                            }else{
+                                $("ul[role=justification-file]").append('<li class="list-group-item d-flex list-group-item-action justify-content-between align-items-center" role="justification_file'+element.id+'"><a href="/download/'+btoa(element.nom)+'">'+element.nom+' <i class="la la-external-link"></i></a><button class="btn btn-pill btn-danger" type="button"  id="'+element.id+'"><i class="la la-trash"></i></button></li>');
+                            }
                         }
+                    }else{
+                        $("ul[role=justification-file]").append('<li class="list-group-item d-flex list-group-item-action justify-content-between align-items-center"> Il n\'y a aucune justification</li>');
                     }
+
                 }
             }
         });

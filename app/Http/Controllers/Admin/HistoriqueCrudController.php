@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Requests\HistoriqueRequest;
+use App\Models\Ordre;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 
@@ -39,8 +40,23 @@ class HistoriqueCrudController extends CrudController
      */
     protected function setupListOperation()
     {
+        //Custom Query
+        if( backpack_user()->role_id == config('backpack.role.cf_id') )
+            $this->crud->addClause('where', 'user_id', '=', backpack_user()->id);
+        if( backpack_user()->role_id == config('backpack.role.ca_id') ){
+            $ordres = Ordre::select('id')->where('user_id', backpack_user()->id)->get();
+            $this->crud->addClause('whereIn', 'ordre_id', $ordres);
+        }
 
         //Columns
+        $this->crud->addColumn([
+            'name'     => 'cf_name',
+            'label'    => 'Nom du CF',
+            'type'     => 'closure',
+            'function' => function($entry) {
+                return $entry->user->name;
+            }
+        ]);
         // CRUD::column('ordre')->type('relationship')->attribute('type');
         // CRUD::column('ordre')->type('relationship')->attribute('numero_of');
         // CRUD::column('ordre')->type('relationship')->attribute('code_affaire');
@@ -59,23 +75,15 @@ class HistoriqueCrudController extends CrudController
                 $ordre = $entry->ordre;
                 if($ordre->type == 'OF'){
                     $link = backpack_url("of/".$ordre->id."/show");
-                    return '<a href="'.$link.'">'.$ordre->numero_of.'</a>';
+                    return '<a href="'.$link.'">'.$ordre->numero_of.' <i class="la la-external-link"></i></a>';
                 }
                 if($ordre->type == 'FAE'){
                     $link = backpack_url("fae/".$ordre->id."/show");
-                    return '<a href="'.$link.'">'.$ordre->numero_of.'</a>';
+                    return '<a href="'.$link.'">'.$ordre->numero_of.' <i class="la la-external-link"></i></a>';
                 }
             }
         ]);
-        $this->crud->addColumn([
-            'label'     => 'Code affaire', // Table column heading
-            'name'      => 'ordre', // the column that contains the ID of that connected entity;
-            'key'       => 'code_affaire', // the column that contains the ID of that connected entity;
-            'entity'    => 'ordre', // the method that defines the relationship in your Model
-            'attribute' => 'code_affaire', // foreign key attribute that is shown to user
-            'model'     => 'App\Models\Ordre', // foreign key model
-        ]);
-        CRUD::column('motif');
+        CRUD::column('motif')->limit(1000000);
         CRUD::column('created_at')->label('Date de refus');
 
         $this->crud->removeAllButtons();

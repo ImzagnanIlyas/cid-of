@@ -29,9 +29,9 @@ use Illuminate\Support\Facades\Request as FacadesRequest;
                 if(response) {
                     let file = response[0];
                     if ($url_last_segment == 'show') {
-                        $("ul[role=ordre-file]").append('<li class="list-group-item d-flex list-group-item-action justify-content-between align-items-center" role="ordre_file"><a href="/download/'+btoa(file.nom)+'">'+file.nom+'</a></li>');
+                        $("ul[role=ordre-file]").append('<li class="list-group-item d-flex list-group-item-action justify-content-between align-items-center" role="ordre_file"><a href="/download/'+btoa(file.nom)+'">'+file.nom+' <i class="la la-external-link"></i></a></li>');
                     }else{
-                        $("ul[role=ordre-file]").append('<li class="list-group-item d-flex list-group-item-action justify-content-between align-items-center" role="ordre_file"><a href="/download/'+btoa(file.nom)+'">'+file.nom+'</a><button class="btn btn-pill btn-danger" type="button"  id="'+file.id+'"><i class="la la-trash"></i></button></li>');
+                        $("ul[role=ordre-file]").append('<li class="list-group-item d-flex list-group-item-action justify-content-between align-items-center" role="ordre_file"><a href="/download/'+btoa(file.nom)+'">'+file.nom+' <i class="la la-external-link"></i></a><button class="btn btn-pill btn-danger" type="button"  id="'+file.id+'"><i class="la la-trash"></i></button></li>');
                     }
                 }
             }
