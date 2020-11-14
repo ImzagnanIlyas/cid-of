@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Requests\OrjRequest;
 use App\Models\Attachement;
+use App\Models\Division;
 use App\Models\Ordre;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
@@ -50,8 +51,67 @@ class OrjCrudController extends CrudController
         //Custom Query
         $this->crud->addClause('where', 'user_id', '=', backpack_user()->id);
 
+        //Filters
+
+        // Division filter (Dropdown multiple)
+        $this->crud->addFilter([
+            'name'  => 'division_filter',
+            'type'  => 'select2_multiple',
+            'label' => 'Division'
+        ], function() {
+            $tab = [];
+            $tmp = Division::all();
+            foreach ($tmp as $key => $value) {
+                $tab[$value->id] = $value->nom;
+            }
+            return $tab;
+        }, function($values) { // if the filter is active
+            foreach (json_decode($values) as $key => $value) {
+                if($key == 0)
+                    $this->crud->addClause('Where', 'division_id', $value);
+                else
+                    $this->crud->addClause('orWhere', 'division_id', $value);
+            }
+        });
+        // date_envoi filter (Daterange)
+        $this->crud->addFilter([
+            'type'  => 'date_range',
+            'name'  => 'date_envoi_filter2',
+            'label' => 'Date d\'envoi'
+        ],
+        false,
+        function ($value) {
+            $dates = json_decode($value);
+            $this->crud->addClause('where', 'date_envoi', '>=', $dates->from);
+            $this->crud->addClause('where', 'date_envoi', '<=', $dates->to . ' 23:59:59');
+        });
+        // date_refus filter (Daterange)
+        $this->crud->addFilter([
+            'type'  => 'date_range',
+            'name'  => 'date_refus_filter',
+            'label' => 'Date de refus'
+        ],
+        false,
+        function ($value) {
+            $dates = json_decode($value);
+            $this->crud->addClause('where', 'date_refus', '>=', $dates->from);
+            $this->crud->addClause('where', 'date_refus', '<=', $dates->to . ' 23:59:59');
+        });
+
         //Columns
-        CRUD::column('division')->type('relationship')->attribute('nom');
+        CRUD::column('type');
+        $this->crud->addColumn([
+            'name'         => 'division',
+            'type'         => 'relationship',
+            'label'        => 'Division',
+            'attribute' => 'nom',
+            'searchLogic' => function ($query, $column, $searchTerm) {
+                    $division = Division::select('id')->where('nom', $searchTerm)->first();
+                    if($division)
+                        $query->orWhere('division_id', $division->id);
+                }
+        ]);
+        CRUD::column('date_envoi');
         $this->crud->addColumn([
             'name'     => 'cf_name',
             'label'    => 'Nom du CF',
@@ -77,7 +137,6 @@ class OrjCrudController extends CrudController
                 }
             }
         ]);
-        CRUD::column('date_envoi');
         CRUD::column('date_refus');
         CRUD::column('motif')->limit(1000000);
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Requests\OrdreRequest;
 use App\Models\Attachement;
+use App\Models\Division;
 use App\Models\Facture;
 use App\Models\Ordre;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
@@ -67,7 +68,7 @@ class OrdreCrudController extends CrudController
 
         //Filters
 
-        // dropdown filter
+        // Type filter (Dropdown)
         $this->crud->addFilter([
             'name'  => 'type_filter',
             'type'  => 'dropdown',
@@ -78,7 +79,27 @@ class OrdreCrudController extends CrudController
         ], function($value) { // if the filter is active
             $this->crud->addClause('where', 'type', ($value == 1) ? 'OF' : 'FAE');
         });
-        // dropdown filter
+        // Division filter (Dropdown multiple)
+        $this->crud->addFilter([
+            'name'  => 'division_filter',
+            'type'  => 'select2_multiple',
+            'label' => 'Division'
+        ], function() {
+            $tab = [];
+            $tmp = Division::all();
+            foreach ($tmp as $key => $value) {
+                $tab[$value->id] = $value->nom;
+            }
+            return $tab;
+        }, function($values) { // if the filter is active
+            foreach (json_decode($values) as $key => $value) {
+                if($key == 0)
+                    $this->crud->addClause('Where', 'division_id', $value);
+                else
+                    $this->crud->addClause('orWhere', 'division_id', $value);
+            }
+        });
+        // Statut filter (Dropdown)
         $this->crud->addFilter([
             'name'  => 'statut_filter',
             'type'  => 'dropdown',
@@ -96,15 +117,63 @@ class OrdreCrudController extends CrudController
                 $this->crud->addClause('where', 'statut', 'Refuse');
             }
         });
+        // date_envoi filter (Daterange)
+        $this->crud->addFilter([
+            'type'  => 'date_range',
+            'name'  => 'date_envoi_filter2',
+            'label' => 'Date d\'envoi'
+        ],
+        false,
+        function ($value) {
+            $dates = json_decode($value);
+            $this->crud->addClause('where', 'date_envoi', '>=', $dates->from);
+            $this->crud->addClause('where', 'date_envoi', '<=', $dates->to . ' 23:59:59');
+        });
+        // date_accept filter (Daterange)
+        $this->crud->addFilter([
+            'type'  => 'date_range',
+            'name'  => 'date_accept_filter2',
+            'label' => 'Date d\'accept'
+        ],
+        false,
+        function ($value) {
+            $dates = json_decode($value);
+            $this->crud->addClause('where', 'date_accept', '>=', $dates->from);
+            $this->crud->addClause('where', 'date_accept', '<=', $dates->to . ' 23:59:59');
+        });
+        if( backpack_user()->role_id == config('backpack.role.ca_id') ){
+            // date_refus filter (Daterange)
+            $this->crud->addFilter([
+                'type'  => 'date_range',
+                'name'  => 'date_refus_filter',
+                'label' => 'Date de refus'
+            ],
+            false,
+            function ($value) {
+                $dates = json_decode($value);
+                $this->crud->addClause('where', 'date_refus', '>=', $dates->from);
+                $this->crud->addClause('where', 'date_refus', '<=', $dates->to . ' 23:59:59');
+            });
+        }
 
         //Columns
         CRUD::column('type');
-        CRUD::column('division')->type('relationship')->attribute('nom');
+        $this->crud->addColumn([
+            'name'         => 'division',
+            'type'         => 'relationship',
+            'label'        => 'Division',
+            'attribute' => 'nom',
+            'searchLogic' => function ($query, $column, $searchTerm) {
+                    $division = Division::select('id')->where('nom', $searchTerm)->first();
+                    if($division)
+                        $query->orWhere('division_id', $division->id);
+                }
+        ]);
+        CRUD::column('date_envoi');
         CRUD::column('code_affaire');
         CRUD::column('numero_of');
         CRUD::column('client');
         //CRUD::column('motif');
-        CRUD::column('date_envoi');
         $this->crud->addColumn([
             'name'     => 'statut',
             'label'    => 'Statut',
@@ -120,7 +189,9 @@ class OrdreCrudController extends CrudController
             }
         ]);
         CRUD::column('date_accept');
-        CRUD::column('date_refus');
+        if( backpack_user()->role_id == config('backpack.role.ca_id') ){
+            CRUD::column('date_refus');
+        }
         //CRUD::column('date_modification');
         //CRUD::column('justification');
         //CRUD::column('montant');
