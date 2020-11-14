@@ -17,7 +17,6 @@ class Ordre extends Model
      */
     protected $fillable = [
         'division_id',
-        'ville',
         'numero_of',
         'code_affaire',
         'observation',

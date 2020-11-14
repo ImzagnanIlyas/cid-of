@@ -31,7 +31,6 @@ class OrjRequest extends FormRequest
         $ordre = Ordre::findOrFail($id); //Ordre to be updated
         return [
             'division_id' => 'required',
-            'ville' =>  ($ordre->type == 'OF') ? 'required' : 'nullable',
             'code_affaire' => 'required',
             'client' => 'required',
             'montant' => 'required',

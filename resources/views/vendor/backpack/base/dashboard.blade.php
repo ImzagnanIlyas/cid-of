@@ -44,22 +44,26 @@ if( backpack_user()->role_id == config('backpack.role.ca_id') ){
     }
 
     try {
-        $odf2  = (App\Models\Of::where('statut', 'En cours')->where('user_id', backpack_user()->id)->count()/App\Models\Ordre::where('statut', 'En cours')->where('user_id', backpack_user()->id)->count())*100;
-        $odf3 = (App\Models\Of::where('statut', 'accepte')->where('user_id', backpack_user()->id)->count()/App\Models\Ordre::where('statut', 'accepte')->where('user_id', backpack_user()->id)->count())*100;
-        $odf4 = (App\Models\Of::where('refus', '1')->where('user_id', backpack_user()->id)->count()/App\Models\Ordre::where('refus', '1')->where('user_id', backpack_user()->id)->count())*100;
+        $odf2 = (App\Models\Of::where('statut', 'En cours')->where('user_id', backpack_user()->id)->count()/App\Models\Ordre::where('statut', 'En cours')->where('user_id', backpack_user()->id)->count())*100;
+        $fae2 = (App\Models\Fae::where('statut', 'En cours')->where('user_id', backpack_user()->id)->count()/App\Models\Ordre::where('statut', 'En cours')->where('user_id', backpack_user()->id)->count())*100;
     } catch (\Throwable $th) {
         $odf2 = 0;
-        $odf3 = 0;
-        $odf4 = 0;
+        $fae2 = 0;
     }
 
     try {
-        $fae2 = (App\Models\Fae::where('statut', 'En cours')->where('user_id', backpack_user()->id)->count()/App\Models\Ordre::where('statut', 'En cours')->where('user_id', backpack_user()->id)->count())*100;
+        $odf3 = (App\Models\Of::where('statut', 'accepte')->where('user_id', backpack_user()->id)->count()/App\Models\Ordre::where('statut', 'accepte')->where('user_id', backpack_user()->id)->count())*100;
         $fae3 = (App\Models\Fae::where('statut', 'accepte')->where('user_id', backpack_user()->id)->count()/App\Models\Ordre::where('statut', 'accepte')->where('user_id', backpack_user()->id)->count())*100;
+    } catch (\Throwable $th) {
+        $odf3 = 0;
+        $fae3 = 0;
+    }
+
+    try {
+        $odf4 = (App\Models\Of::where('refus', '1')->where('user_id', backpack_user()->id)->count()/App\Models\Ordre::where('refus', '1')->where('user_id', backpack_user()->id)->count())*100;
         $fae4 = (App\Models\Fae::where('refus', '1')->where('user_id', backpack_user()->id)->count()/App\Models\Ordre::where('refus', '1')->where('user_id', backpack_user()->id)->count())*100;
     } catch (\Throwable $th) {
-        $fae2 = 0;
-        $fae3 = 0;
+        $odf4 = 0;
         $fae4 = 0;
     }
 

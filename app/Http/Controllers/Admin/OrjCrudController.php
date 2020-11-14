@@ -198,9 +198,6 @@ class OrjCrudController extends CrudController
                 'group_by_relationship_back' => 'divisions',
             ]
         );
-        if ($ordre->type == 'OF') {
-            CRUD::field('ville');
-        }
         $this->crud->addField(
             [
                 'label'     => 'Numéro',
