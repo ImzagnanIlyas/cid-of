@@ -55,7 +55,6 @@ class OfCrudController extends CrudController
         }
         CRUD::column('date_envoi');
         CRUD::column('division')->type('relationship')->attribute('nom');
-        CRUD::column('ville');
         CRUD::column('numero_of');
         CRUD::column('code_affaire');
         CRUD::column('client');
@@ -226,7 +225,6 @@ class OfCrudController extends CrudController
                 'group_by_relationship_back' => 'divisions',
             ]
         );
-        CRUD::field('ville');
         CRUD::field('numero_of')->default('OF/'.date('Y').'/'.date('dmHis'));
         CRUD::field('code_affaire');
         CRUD::field('observation');
@@ -316,7 +314,6 @@ class OfCrudController extends CrudController
                 'group_by_relationship_back' => 'divisions',
             ]
         );
-        CRUD::field('ville');
         $this->crud->addField(
             [
                 'label'     => 'Numéro',

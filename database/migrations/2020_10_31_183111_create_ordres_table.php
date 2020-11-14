@@ -30,7 +30,6 @@ class CreateOrdresTable extends Migration
             $table->boolean('refus')->default(0);
             $table->string('statut')->default('En cours');
             $table->string('type');
-            $table->string('ville')->nullable();
             $table->unsignedBigInteger('division_id');
             $table->foreign('division_id')->references('id')->on('divisions');
             $table->unsignedBigInteger('user_id')->nullable();

@@ -26,7 +26,6 @@ class UpdateOfRequest extends FormRequest
     {
         return [
             'division_id' => 'required',
-            'ville' => 'required',
             'code_affaire' => 'required',
             'client' => 'required',
             'montant' => 'required',

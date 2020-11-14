@@ -26,7 +26,6 @@ class CreateOfRequest extends FormRequest
     {
         return [
             'division_id' => 'required',
-            'ville' => 'required',
             'numero_of' => 'required',
             'code_affaire' => 'required',
             'client' => 'required',
