@@ -35,6 +35,9 @@ class FaeCrudController extends CrudController
         CRUD::setEntityNameStrings('Facture à établir', 'Factures à établir');
         if( backpack_user()->role_id == config('backpack.role.admin_id') )
             abort(403);
+
+        // Add export button
+        $this->crud->enableExportButtons();
     }
 
     protected function setupShowOperation()

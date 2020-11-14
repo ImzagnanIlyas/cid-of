@@ -40,6 +40,9 @@ class OrdreCrudController extends CrudController
         }
         if( backpack_user()->role_id == config('backpack.role.admin_id') )
             abort(403);
+
+        // Add export button
+        $this->crud->enableExportButtons();
     }
 
     /**

@@ -30,6 +30,9 @@ class HistoriqueCrudController extends CrudController
         CRUD::setModel(\App\Models\Historique::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/historique');
         CRUD::setEntityNameStrings('historique', 'Historiques des refus');
+
+        // Add export button
+        $this->crud->enableExportButtons();
     }
 
     /**

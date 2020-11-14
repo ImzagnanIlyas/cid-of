@@ -38,6 +38,9 @@ class FactureCrudController extends CrudController
         }else{
             CRUD::setEntityNameStrings('facture', 'factures');
         }
+
+        // Add export button
+        $this->crud->enableExportButtons();
     }
 
     protected function setupShowOperation()

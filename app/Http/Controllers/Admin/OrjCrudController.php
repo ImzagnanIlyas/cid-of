@@ -35,6 +35,9 @@ class OrjCrudController extends CrudController
         CRUD::setEntityNameStrings('orj', 'ODF/FAE rejetés');
         if( backpack_user()->role_id != config('backpack.role.ca_id') )
             abort(403);
+
+        // Add export button
+        $this->crud->enableExportButtons();
     }
 
     /**

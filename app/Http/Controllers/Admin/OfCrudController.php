@@ -38,6 +38,9 @@ class OfCrudController extends CrudController
         CRUD::setEntityNameStrings('Ordre de facturation', 'Ordres de facturations');
         if( backpack_user()->role_id == config('backpack.role.admin_id') )
             abort(403);
+
+        // Add export button
+        $this->crud->enableExportButtons();
     }
 
     protected function setupShowOperation()
