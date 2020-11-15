@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Requests\CreateFactureRequest as StoreRequest;
 use App\Http\Requests\UpdateFactureRequest as UpdateRequest;
 use App\Models\Attachement;
+use App\Models\Division;
 use App\Models\Ordre;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
@@ -139,6 +140,28 @@ class FactureCrudController extends CrudController
             $this->crud->addClause('whereIn', 'ordre_id', ($value == 1) ? $OFs : $FAEs);
         });
 
+        // Division filter (Dropdown multiple)
+        $this->crud->addFilter([
+            'name'  => 'division_filter',
+            'type'  => 'select2_multiple',
+            'label' => 'Division'
+        ], function() {
+            $tab = [];
+            $tmp = Division::all();
+            foreach ($tmp as $key => $value) {
+                $tab[$value->id] = $value->nom;
+            }
+            return $tab;
+        }, function($values) { // if the filter is active
+            foreach (json_decode($values) as $key => $value) {
+                $ordre_ids = Ordre::select('id')->where('division_id', $value)->get(); // all orders ids belonging to the selected division
+                if($key == 0)
+                    $this->crud->addClause('whereIn', 'ordre_id', $ordre_ids);
+                else
+                    $this->crud->addClause('orWhereIn', 'ordre_id', $ordre_ids);
+            }
+        });
+
         // date filter
         $this->crud->addFilter([
             'type'  => 'date',
@@ -163,17 +186,17 @@ class FactureCrudController extends CrudController
             $this->crud->addClause('where', 'date_facturation', '<=', $dates->to . ' 23:59:59');
         });
 
-        //Reception
+        // Reception filter
         $this->crud->addFilter([
-            'type'  => 'simple',
-            'name'  => 'Reception',
-            'label' => 'Réception'
-          ],
-          false,
-          function() { // if the filter is active
-            $this->crud->addClause('where', 'reception_client', 1);
-          }
-        );
+            'name'  => 'reception',
+            'type'  => 'dropdown',
+            'label' => 'Reception'
+        ], [
+            1 => 'Pas encore',
+            2 => 'Oui',
+        ], function($value) { // if the filter is active
+            $this->crud->addClause('where', 'reception_client', ($value == 1) ? 0 : 1);
+        });
 
         //Columns
         CRUD::column('division_name');
@@ -190,6 +213,14 @@ class FactureCrudController extends CrudController
                 if($ordre->type == 'FAE'){
                     $link = backpack_url("fae/".$ordre->id."/show");
                     return '<a href="'.$link.'">'.$ordre->numero_of.' <i class="la la-external-link"></i></a>';
+                }
+            },
+            'searchLogic' => function ($query, $column, $searchTerm) {
+                $division = Division::select('id')->where('nom', $searchTerm)->first(); // the entered division
+                if($division){
+                    $ordre_ids = Ordre::select('id')->where('division_id', $division->id)->get(); // all orders ids belonging to the entered division
+                    if (! $ordre_ids->isEmpty())
+                        $query->WhereIn('ordre_id', $ordre_ids); // add clause to get factures belonging to ordres
                 }
             }
         ]);
