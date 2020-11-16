@@ -29,8 +29,11 @@ class DivisionCrudController extends CrudController
         CRUD::setModel(\App\Models\Division::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/division');
         CRUD::setEntityNameStrings('division', 'divisions');
-        if( backpack_user()->role_id != config('backpack.role.admin_id') )
+        if( backpack_user()->role_id != config('backpack.role.admin_id') && backpack_user()->role_id != config('backpack.role.su_id') )
             abort(403);
+
+        // Add export button
+        $this->crud->enableExportButtons();
     }
 
     /**

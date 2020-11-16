@@ -31,9 +31,11 @@ class UserCrudController extends CrudController
         CRUD::setModel(\App\Models\User::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/user');
         CRUD::setEntityNameStrings('user', 'users');
-        if( backpack_user()->role_id != config('backpack.role.admin_id') )
+        if( backpack_user()->role_id != config('backpack.role.admin_id') && backpack_user()->role_id != config('backpack.role.su_id') )
             abort(403);
 
+        // Add export button
+        $this->crud->enableExportButtons();
     }
 
     protected function setupShowOperation()
