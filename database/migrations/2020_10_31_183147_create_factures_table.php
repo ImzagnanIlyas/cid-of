@@ -22,9 +22,9 @@ class CreateFacturesTable extends Migration
             $table->string('numero_facture');
             $table->boolean('reception_client')->default(0);
             $table->unsignedBigInteger('ordre_id');
-            $table->foreign('ordre_id')->references('id')->on('ordres');
+            $table->foreign('ordre_id')->references('id')->on('ordres')->onDelete('cascade');
             $table->unsignedBigInteger('user_id');
-            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
 
             $table->timestamps();
         });

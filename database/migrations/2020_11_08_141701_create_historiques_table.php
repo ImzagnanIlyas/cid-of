@@ -16,9 +16,9 @@ class CreateHistoriquesTable extends Migration
         Schema::create('historiques', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('ordre_id');
-            $table->foreign('ordre_id')->references('id')->on('ordres');
+            $table->foreign('ordre_id')->references('id')->on('ordres')->onDelete('cascade');
             $table->unsignedBigInteger('user_id');
-            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->text('motif')->nullable();
             $table->timestamps();
         });

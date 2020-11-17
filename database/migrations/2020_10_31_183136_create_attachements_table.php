@@ -19,7 +19,7 @@ class CreateAttachementsTable extends Migration
             $table->text('context');
             $table->string('nom');
             $table->unsignedBigInteger('ordre_id');
-            $table->foreign('ordre_id')->references('id')->on('ordres');
+            $table->foreign('ordre_id')->references('id')->on('ordres')->onDelete('cascade');
             $table->timestamps();
         });
     }
