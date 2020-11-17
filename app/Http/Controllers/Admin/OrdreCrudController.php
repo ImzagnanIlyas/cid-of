@@ -20,7 +20,7 @@ class OrdreCrudController extends CrudController
 {
     use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
+    use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation { update as traitUpdate; }
     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
 
@@ -36,7 +36,7 @@ class OrdreCrudController extends CrudController
         if( backpack_user()->role_id == config('backpack.role.cf_id') ){
             CRUD::setEntityNameStrings('ODF/FAE', 'Historiques des admissions');
         }else{
-            CRUD::setEntityNameStrings('ODF/FAE', 'Les ODFs/FAEs');
+            CRUD::setEntityNameStrings('ODF/FAE', 'ODFs/FAEs');
         }
         if( backpack_user()->role_id == config('backpack.role.admin_id') )
             abort(403);
@@ -66,8 +66,10 @@ class OrdreCrudController extends CrudController
         $this->crud->denyAccess('create');
 
         //Hide Action buttons
-        $this->crud->denyAccess('delete');
-        $this->crud->denyAccess('update');
+        if( backpack_user()->role_id != config('backpack.role.su_id') ){
+            $this->crud->denyAccess('delete');
+            $this->crud->denyAccess('update');
+        }
 
         //Filters
 
@@ -144,7 +146,7 @@ class OrdreCrudController extends CrudController
             $this->crud->addClause('where', 'date_accept', '>=', $dates->from);
             $this->crud->addClause('where', 'date_accept', '<=', $dates->to . ' 23:59:59');
         });
-        if( backpack_user()->role_id == config('backpack.role.ca_id') ){
+        if( backpack_user()->role_id != config('backpack.role.cf_id') ){
             // date_refus filter (Daterange)
             $this->crud->addFilter([
                 'type'  => 'date_range',
@@ -161,6 +163,8 @@ class OrdreCrudController extends CrudController
 
         //Columns
         CRUD::column('type');
+        if( backpack_user()->role_id == config('backpack.role.su_id') )
+            CRUD::column('user')->relationship('user')->attribute('name')->label('Utilisateur');
         $this->crud->addColumn([
             'name'         => 'division',
             'type'         => 'relationship',
@@ -192,7 +196,7 @@ class OrdreCrudController extends CrudController
             }
         ]);
         CRUD::column('date_accept');
-        if( backpack_user()->role_id == config('backpack.role.ca_id') ){
+        if( backpack_user()->role_id != config('backpack.role.cf_id') ){
             CRUD::column('date_refus');
         }
         //CRUD::column('date_modification');
@@ -288,7 +292,138 @@ class OrdreCrudController extends CrudController
         ]);
 
         // Remove action column
-        $this->crud->removeButton( 'update' );
-        $this->crud->removeButton( 'delete' );
+        if( backpack_user()->role_id != config('backpack.role.su_id') ){
+            $this->crud->removeButton( 'update' );
+            $this->crud->removeButton( 'delete' );
+        }
     }
+
+    /**
+     * Define what happens when the Update operation is loaded.
+     *
+     * @see https://backpackforlaravel.com/docs/crud-operation-update
+     * @return void
+     */
+    protected function setupUpdateOperation()
+    {
+        CRUD::setValidation(OrdreRequest::class);
+
+        $id = Request::segment(3); //id of selected ordre
+        $ordre = Ordre::findOrFail($id); //Ordre to be updated
+
+        $this->crud->addField(
+            [
+                'label'     => 'Division (Les division groupées par pole)',
+                'type'      => 'select2_grouped',
+                'name'      => 'division_id',
+                'entity'    => 'division',
+                'attribute' => 'nom',
+                'group_by'  => 'pole',
+                'group_by_attribute' => 'nom',
+                'group_by_relationship_back' => 'divisions',
+            ]
+        );
+        $this->crud->addField(
+            [
+                'label'     => 'Numéro',
+                'type'      => 'text',
+                'name'      => 'numero_of',
+                'attributes' => [
+                    'disabled'    => 'disabled',
+                ],
+            ]
+        );
+        CRUD::field('code_affaire');
+        CRUD::field('observation');
+        CRUD::field('client');
+        CRUD::field('montant')->type('number')->attributes(["step" => "any"]);
+        CRUD::field('montant_devise');
+        $this->crud->addField(
+            [   // Upload
+                'name'      => 'document',
+                'label'     => ($ordre->type == 'OF') ? 'Ordre de facturation (PDF)' : 'Facture à établir (PDF)' ,
+                'type'      => 'upload',
+                'upload'    => true,
+                'disk'      => 'public',
+                'attributes' => [
+                    'disabled'    => 'disabled',
+                ],
+            ]
+        );
+        $this->crud->addField([   // view of Ordre file
+            'name' => 'ordre-file',
+            'type' => 'view',
+            'view' => 'ordre-file'
+        ]);
+        if ($ordre->type == 'OF') {
+            $this->crud->addField(
+                [   // Upload
+                    'name'      => 'justification',
+                    'label'     => 'Justification(s) (PDF)',
+                    'type'      => 'upload_multiple',
+                    'upload'    => true,
+                    'disk'      => 'public',
+                ]
+            );
+            $this->crud->addField([   // view of Justification files list
+                'name' => 'justification-file',
+                'type' => 'view',
+                'view' => 'justification-file'
+            ]);
+        }
+
+        // hidden fields :
+        CRUD::field('date_modification')->type('hidden')->value(date('Y-m-d'));
+        CRUD::field('motif')->type('hidden')->value('');
+        CRUD::field('date_refus')->type('hidden')->value('');
+        CRUD::field('refus')->type('hidden')->value(0);
+        CRUD::field('statut')->type('hidden')->value('En cours');
+    }
+
+    public function update($id)
+    {
+        // do something befor save
+        $ordre = Ordre::findOrFail($id); //Ordre to be updated
+
+        $response = $this->traitUpdate();
+        // do something after save
+
+        $request = $this->crud->getRequest();
+        $ordre_file_id = $request->input('ordre_file_id');
+        if ($ordre->type == 'OF')
+            $justification_file_id = explode(",", $request->input('justification_file_id'));
+
+        //Save new Ordre file if the existing one will be deleted :
+        if($ordre_file_id){
+            Attachement::create([
+                'type' => 'application/pdf',
+                'context' => strtolower($ordre->type),
+                'nom' => $request->file('document')->storeAs('', date('_dmY_His_').$request->file('document')->getClientOriginalName(), 'public'),
+                'ordre_id' => $this->crud->entry->id,
+            ]);
+        }
+        //Save new Justification files :
+        if ($ordre->type == 'OF')
+            if($request->file('justification')){
+                foreach($request->file('justification') as $file){
+                    Attachement::create([
+                        'type' => 'application/pdf',
+                        'context' => 'justification',
+                        'nom' => $file->storeAs('', date('_dmY_His_').$file->getClientOriginalName(), 'public'),
+                        'ordre_id' => $this->crud->entry->id,
+                    ]);
+                }
+            }
+
+        //Delete old Ordre File :
+        if($ordre_file_id)
+            Attachement::whereId($ordre_file_id)->delete();
+        //Delete Justification files :
+        if ($ordre->type == 'OF')
+            if($justification_file_id)
+                Attachement::whereIn('id', $justification_file_id)->delete();
+
+        return $response;
+    }
+
 }

@@ -26,7 +26,13 @@ class OrdreRequest extends FormRequest
     public function rules()
     {
         return [
-            // 'name' => 'required|min:5|max:255'
+            'division_id' => 'required',
+            'code_affaire' => 'required',
+            'client' => 'required',
+            'montant' => 'required',
+            'montant_devise' => 'required',
+            'document' => 'required_with:ordre_file_id|mimes:pdf',
+            'justification.*' => 'nullable|mimes:pdf',
         ];
     }
 

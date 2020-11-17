@@ -6,7 +6,7 @@
 <!-- Admin Sidebar -->
 @if( backpack_user()->role_id == config('backpack.role.su_id') )
 <li class="nav-item nav-dropdown">
-  <a class="nav-link nav-dropdown-toggle" href="#"><i class="nav-icon la la-lock"></i> Authentication</a>
+  <a class="nav-link nav-dropdown-toggle" href="#"><i class="nav-icon la la-lock"></i> Authentification</a>
   <ul class="nav-dropdown-items">
     <li class='nav-item'><a class='nav-link' href='{{ backpack_url('user') }}'><i class='nav-icon la la-users'></i> Utilisateurs</a></li>
     <li class='nav-item'><a class='nav-link' href='{{ backpack_url('role') }}'><i class='nav-icon la la-user-lock'></i> Roles</a></li>
@@ -18,6 +18,13 @@
   <ul class="nav-dropdown-items">
     <li class='nav-item'><a class='nav-link' href='{{ backpack_url('pole') }}'><i class='nav-icon la la-box'></i> Poles</a></li>
     <li class='nav-item'><a class='nav-link' href='{{ backpack_url('division') }}'><i class='nav-icon la la-folder'></i> Divisions</a></li>
+  </ul>
+</li>
+
+<li class="nav-item nav-dropdown">
+  <a class="nav-link nav-dropdown-toggle" href="#"><i class="nav-icon la la-database"></i> Données</a>
+  <ul class="nav-dropdown-items">
+  <li class='nav-item'><a class='nav-link' href='{{ backpack_url('ordre') }}'><i class='nav-icon la la-files-o'></i> ODFs/FAEs</a></li>
   </ul>
 </li>
 
