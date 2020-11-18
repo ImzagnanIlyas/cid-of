@@ -6,6 +6,7 @@ use App\Http\Requests\CreateFactureRequest as StoreRequest;
 use App\Http\Requests\UpdateFactureRequest as UpdateRequest;
 use App\Models\Attachement;
 use App\Models\Division;
+use App\Models\Facture;
 use App\Models\Ordre;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
@@ -21,7 +22,7 @@ class FactureCrudController extends CrudController
     use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation { store as traitStore; }
     use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation { update as traitUpdate; }
-    use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
+    use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation { destroy as traitDestroy; }
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
 
     /**
@@ -49,6 +50,8 @@ class FactureCrudController extends CrudController
         $this->crud->set('show.setFromDb', false);
 
         //Columns
+        if( backpack_user()->role_id == config('backpack.role.su_id') )
+            CRUD::column('user')->relationship('user')->attribute('name')->label('Utilisateur');
         CRUD::column('division_name');
         $this->crud->addColumn([
             'name'     => 'type',
@@ -199,6 +202,8 @@ class FactureCrudController extends CrudController
         });
 
         //Columns
+        if( backpack_user()->role_id == config('backpack.role.su_id') )
+            CRUD::column('user')->relationship('user')->attribute('name')->label('Utilisateur');
         CRUD::column('division_name');
         $this->crud->addColumn([
             'name'     => 'type',
@@ -225,8 +230,8 @@ class FactureCrudController extends CrudController
             }
         ]);
         CRUD::column('numero_facture');
-        CRUD::column('client');
-        CRUD::column('montant');
+        CRUD::column('client')->priority(999);
+        CRUD::column('montant')->priority(1000);
         CRUD::column('date_facturation');
         //CRUD::column('reception_client');
         $this->crud->addColumn([
@@ -244,8 +249,10 @@ class FactureCrudController extends CrudController
         CRUD::column('date_reception_client');
 
         //Hide buttons
-        $this->crud->denyAccess('delete');
-        $this->crud->denyAccess('update');
+        if( backpack_user()->role_id != config('backpack.role.su_id') ){
+            $this->crud->denyAccess('delete');
+            $this->crud->denyAccess('update');
+        }
         // if ($this->crud->getRequest()->accuser)
         //     $this->crud->allowAccess('update');
 
@@ -375,22 +382,33 @@ class FactureCrudController extends CrudController
     {
         CRUD::setValidation(UpdateRequest::class);
 
-        CRUD::field('date_reception_client')->type('date_picker');
-        $this->crud->addField(
-            [   // Upload
-                'name'      => 'reception_file',
-                'label'     => 'Justification de reception (PDF)',
-                'type'      => 'upload',
-                'upload'    => true,
-                'disk'      => 'public',
-            ]
-        );
+        if( backpack_user()->role_id == config('backpack.role.su_id') ){
+            CRUD::field('numero_facture')->attributes(["disabled" => "disabled"]);
+            CRUD::field('montant')->type('number')->attributes(["step" => "any"])->wrapper(['class' => 'form-group col-md-6']);
+            CRUD::field('montant_devise')->wrapper(['class' => 'form-group col-md-6']);
 
-        // hidden fields :
-        CRUD::field('reception_client')->type('hidden')->value(1);
 
-        // remove choice from save action :
-        $this->crud->removeSaveActions(['save_and_back','save_and_edit', 'save_and_new']);
+            // remove choice from save action :
+            $this->crud->removeSaveActions(['save_and_new']);
+        }else{
+            CRUD::field('date_reception_client')->type('date_picker');
+            $this->crud->addField(
+                [   // Upload
+                    'name'      => 'reception_file',
+                    'label'     => 'Justification de reception (PDF)',
+                    'type'      => 'upload',
+                    'upload'    => true,
+                    'disk'      => 'public',
+                ]
+            );
+
+            // hidden fields :
+            CRUD::field('reception_client')->type('hidden')->value(1);
+
+            // remove choice from save action :
+            $this->crud->removeSaveActions(['save_and_back','save_and_edit', 'save_and_new']);
+        }
+
     }
 
     public function update()
@@ -402,13 +420,27 @@ class FactureCrudController extends CrudController
 
         $request = $this->crud->getRequest();
 
-        Attachement::create([
-            'type' => 'application/pdf',
-            'context' => 'reception',
-            'nom' => $request->file('reception_file')->storeAs('', date('_dmY_His_').$request->file('reception_file')->getClientOriginalName(), 'public'),
-            'ordre_id' => $this->crud->entry->ordre_id,
-        ]);
+        if( backpack_user()->role_id != config('backpack.role.su_id') )
+            Attachement::create([
+                'type' => 'application/pdf',
+                'context' => 'reception',
+                'nom' => $request->file('reception_file')->storeAs('', date('_dmY_His_').$request->file('reception_file')->getClientOriginalName(), 'public'),
+                'ordre_id' => $this->crud->entry->ordre_id,
+            ]);
 
         return $response;
+    }
+
+    public function destroy($id)
+    {
+        $this->crud->hasAccessOrFail('delete');
+
+        $facture = Facture::findOrFail($id);
+        $ordre = $facture->ordre;
+        $ordre->date_accept = NULL;
+        $ordre->statut = 'En cours';
+        $ordre->save();
+
+        return $this->crud->delete($id);
     }
 }

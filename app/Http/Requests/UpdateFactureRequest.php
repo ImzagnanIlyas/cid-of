@@ -25,10 +25,17 @@ class UpdateFactureRequest extends FormRequest
      */
     public function rules()
     {
-        return [
-            'date_reception_client' => 'required',
-            'reception_file' => 'required|mimes:pdf',
-        ];
+        if( backpack_user()->role_id == config('backpack.role.su_id') ){
+            return [
+                'montant' => 'required',
+                'montant_devise' => 'required',
+            ];
+        }else{
+            return [
+                'date_reception_client' => 'required',
+                'reception_file' => 'required|mimes:pdf',
+            ];
+        }
     }
 
     /**

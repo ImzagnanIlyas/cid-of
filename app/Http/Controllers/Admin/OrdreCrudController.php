@@ -223,6 +223,8 @@ class OrdreCrudController extends CrudController
         $ordre = Ordre::findOrFail(Request::segment(3));
 
         CRUD::column('type');
+        if( backpack_user()->role_id == config('backpack.role.su_id') )
+            CRUD::column('user')->relationship('user')->attribute('name')->label('Utilisateur');
         CRUD::column('date_envoi');
         CRUD::column('division')->type('relationship')->attribute('nom');
         CRUD::column('numero_of');
