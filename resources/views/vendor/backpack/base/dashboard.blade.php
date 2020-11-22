@@ -91,35 +91,6 @@ if( backpack_user()->role_id == config('backpack.role.ca_id') ){
 @section('content')
 @if( backpack_user()->role_id == config('backpack.role.ca_id') )
     <div class="row">
-        <div class="col-6 col-lg-6">
-        <div class="card">
-            <div class="card-body p-0 d-flex align-items-center"><i class="la la-check-circle-o bg-success p-4 px-5 font-2xl mr-3"></i>
-            <div>
-                <div class="text-value-sm text-success">
-                    {{ App\Models\Ordre::where('statut', 'accepte')->where('user_id', backpack_user()->id)->whereDate('date_accept', date('Y-m-d'))->count() }}
-                </div>
-                <div class="text-muted text-uppercase font-weight-bold small">Les ODFs/FAEs accéptés aujourd'hui</div>
-            </div>
-            </div>
-        </div>
-        </div>
-        <!-- /.col-->
-        <div class="col-6 col-lg-6">
-        <div class="card">
-            <div class="card-body p-0 d-flex align-items-center"><i class="la la-ban bg-danger p-4 px-5 font-2xl mr-3"></i>
-            <div>
-                <div class="text-value-sm text-danger">
-                    {{ App\Models\Ordre::where('refus', 1)->where('user_id', backpack_user()->id)->whereDate('date_refus', date('Y-m-d'))->count() }}
-                </div>
-                <div class="text-muted text-uppercase font-weight-bold small">Les ODFs/FAEs refusés aujourd'hui</div>
-            </div>
-            </div>
-        </div>
-        </div>
-        <!-- /.col-->
-    </div>
-    <hr>
-    <div class="row">
         <div class="col-sm-6 col-md-3">
         <div class="card text-white bg-primary">
             <div class="card-body">

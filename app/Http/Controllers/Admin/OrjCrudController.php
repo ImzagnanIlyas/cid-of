@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Requests\OrjRequest;
 use App\Models\Attachement;
 use App\Models\Division;
+use App\Models\Notification;
 use App\Models\Ordre;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
@@ -297,6 +298,13 @@ class OrjCrudController extends CrudController
         if ($ordre->type == 'OF')
             if($justification_file_id)
                 Attachement::whereIn('id', $justification_file_id)->delete();
+
+        //Add Notification - REGULARISER
+        Notification::create([
+            'action' => 'REGULARISER',
+            'user_id' => $ordre->historiques->last()->user->id, // id du CF qui a rejeté l'ordre
+            'ordre_id' => $ordre->id,
+        ]);
 
         return $response;
     }

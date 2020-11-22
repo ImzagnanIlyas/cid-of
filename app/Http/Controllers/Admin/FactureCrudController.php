@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateFactureRequest as UpdateRequest;
 use App\Models\Attachement;
 use App\Models\Division;
 use App\Models\Facture;
+use App\Models\Notification;
 use App\Models\Ordre;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
@@ -369,6 +370,13 @@ class FactureCrudController extends CrudController
             'ordre_id' => $request->ordre_id,
         ]);
 
+        //Add Notification - ACCEPTER
+        Notification::create([
+            'action' => 'ACCEPTER',
+            'user_id' => backpack_user()->id,
+            'ordre_id' => $request->ordre_id,
+        ]);
+
         return $response;
     }
 
@@ -420,13 +428,20 @@ class FactureCrudController extends CrudController
 
         $request = $this->crud->getRequest();
 
-        if( backpack_user()->role_id != config('backpack.role.su_id') )
+        if( backpack_user()->role_id != config('backpack.role.su_id') ){
             Attachement::create([
                 'type' => 'application/pdf',
                 'context' => 'reception',
                 'nom' => $request->file('reception_file')->storeAs('', date('_dmY_His_').$request->file('reception_file')->getClientOriginalName(), 'public'),
                 'ordre_id' => $this->crud->entry->ordre_id,
             ]);
+            //Add Notification - ACCUSER
+            Notification::create([
+                'action' => 'ACCUSER',
+                'user_id' => backpack_user()->id,
+                'ordre_id' => $this->crud->entry->ordre_id,
+            ]);
+        }
 
         return $response;
     }

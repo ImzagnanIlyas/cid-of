@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Attachement;
 use App\Models\Facture;
 use App\Models\Historique;
+use App\Models\Notification;
 use App\Models\Ordre;
 use Illuminate\Http\Request;
 
@@ -56,6 +57,14 @@ class FilesController extends Controller
         $histo->user_id = backpack_user()->id;
         $histo->motif = $request->motif;
         $histo->save();
+
+        //Add Notification - REJETER
+        Notification::create([
+            'action' => 'REJETER',
+            'user_id' => backpack_user()->id,
+            'ordre_id' => $request->ordre_id,
+        ]);
+
 
         return "OK";
     }
