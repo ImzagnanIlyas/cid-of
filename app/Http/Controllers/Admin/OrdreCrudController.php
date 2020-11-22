@@ -178,7 +178,7 @@ class OrdreCrudController extends CrudController
         ]);
         CRUD::column('date_envoi');
         CRUD::column('code_affaire');
-        CRUD::column('numero_of');
+        CRUD::column('numero_of')->label('Numéro');
         CRUD::column('client');
         //CRUD::column('motif');
         $this->crud->addColumn([
@@ -227,7 +227,7 @@ class OrdreCrudController extends CrudController
             CRUD::column('user')->relationship('user')->attribute('name')->label('Utilisateur');
         CRUD::column('date_envoi');
         CRUD::column('division')->type('relationship')->attribute('nom');
-        CRUD::column('numero_of');
+        CRUD::column('numero_of')->label('Numéro');
         CRUD::column('code_affaire');
         CRUD::column('client');
         CRUD::column('observation');

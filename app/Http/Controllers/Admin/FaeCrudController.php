@@ -55,7 +55,7 @@ class FaeCrudController extends CrudController
         }
         CRUD::column('date_envoi');
         CRUD::column('division')->type('relationship')->attribute('nom');
-        CRUD::column('numero_of');
+        CRUD::column('numero_of')->label('Numéro');
         CRUD::column('code_affaire');
         CRUD::column('client');
         CRUD::column('observation');
@@ -225,7 +225,7 @@ class FaeCrudController extends CrudController
         CRUD::column('date_envoi');
         if( backpack_user()->role_id == config('backpack.role.cf_id') ){
             CRUD::column('user')->type('relationship')->attribute('name');
-            CRUD::column('numero_of');
+            CRUD::column('numero_of')->label('Numéro');
         }
         CRUD::column('code_affaire');
         CRUD::column('client');
@@ -288,7 +288,7 @@ class FaeCrudController extends CrudController
                 'group_by_relationship_back' => 'divisions',
             ]
         );
-        CRUD::field('numero_of')->default('FAE/'.date('Y').'/'.date('dmHis'));
+        CRUD::field('numero_of')->label('Numéro')->default('FAE/'.date('Y').'/'.date('dmHis'));
         CRUD::field('code_affaire');
         CRUD::field('observation');
         CRUD::field('client');
