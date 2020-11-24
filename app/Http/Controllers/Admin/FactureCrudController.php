@@ -370,13 +370,6 @@ class FactureCrudController extends CrudController
             'ordre_id' => $request->ordre_id,
         ]);
 
-        //Add Notification - ACCEPTER
-        Notification::create([
-            'action' => 'ACCEPTER',
-            'user_id' => backpack_user()->id,
-            'ordre_id' => $request->ordre_id,
-        ]);
-
         return $response;
     }
 
@@ -433,12 +426,6 @@ class FactureCrudController extends CrudController
                 'type' => 'application/pdf',
                 'context' => 'reception',
                 'nom' => $request->file('reception_file')->storeAs('', date('_dmY_His_').$request->file('reception_file')->getClientOriginalName(), 'public'),
-                'ordre_id' => $this->crud->entry->ordre_id,
-            ]);
-            //Add Notification - ACCUSER
-            Notification::create([
-                'action' => 'ACCUSER',
-                'user_id' => backpack_user()->id,
                 'ordre_id' => $this->crud->entry->ordre_id,
             ]);
         }
