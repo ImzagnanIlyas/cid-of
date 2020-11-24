@@ -24,34 +24,12 @@
                     <div class="list-group-item list-group-item-accent-secondary bg-light p-0 text-center font-weight-bold text-muted text-uppercase small">Aujourd'hui</div>
                     @forelse ($today_notif as $notif)
                         @switch($notif->action)
-                            @case('ACCEPTER')
-                                <div class="list-group-item list-group-item-accent-success list-group-item-divider">
-                                    <i class="la la-check-circle-o text-success mr-1"></i>
-                                    <a class="text-dark" href="{{ backpack_url('ordre/'.$notif->ordre->id.'/show') }}"><strong>{{ $notif->user->name }}</strong> a accepté votre {{ $notif->ordre->type }}</a><br>
-                                    <div class="d-flex justify-content-between">
-                                        <small class="text-muted"><i class="la la-file-text""></i>&nbsp; {{ $notif->ordre->numero_of }}</small>
-                                        <small class="text-muted"><i class="la la-clock"></i>&nbsp; {{ $notif->created_at->isoFormat('HH:mm') }}</small>
-                                    </div>
-                                </div>
-                                @break
-
                             @case('REJETER')
                                 <div class="list-group-item list-group-item-accent-danger list-group-item-divider">
                                     <i class="la la-ban text-danger mr-1"></i>
                                     <a class="text-dark" href="{{ backpack_url('orj') }}"><strong>{{ $notif->user->name }}</strong> a rejeté votre {{ $notif->ordre->type }}</a><br>
                                     <div class="d-flex justify-content-between">
-                                        <small class="text-muted"><i class="la la-file-text""></i>&nbsp; {{ $notif->ordre->numero_of }}</small>
-                                        <small class="text-muted"><i class="la la-clock"></i>&nbsp; {{ $notif->created_at->isoFormat('HH:mm') }}</small>
-                                    </div>
-                                </div>
-                                @break
-
-                            @case('ACCUSER')
-                                <div class="list-group-item list-group-item-accent-primary list-group-item-divider">
-                                    <i class="la la-thumbs-up text-primary mr-1"></i>
-                                    <a class="text-dark" href="{{ backpack_url('facture/'.$notif->ordre->facture->id.'/show') }}"><strong>{{ $notif->user->name }}</strong> a accusé la reception de la facture de votre {{ $notif->ordre->type }}</a><br>
-                                    <div class="d-flex justify-content-between">
-                                        <small class="text-muted"><i class="la la-file-text""></i>&nbsp; {{ $notif->ordre->numero_of }}</small>
+                                        <small class="text-muted"><i class="la la-file-text""></i>&nbsp; {{ $notif->ordre->code_affaire }}</small>
                                         <small class="text-muted"><i class="la la-clock"></i>&nbsp; {{ $notif->created_at->isoFormat('HH:mm') }}</small>
                                     </div>
                                 </div>
@@ -62,7 +40,7 @@
                                     <i class="la la-edit text-success mr-1"></i>
                                     <a class="text-dark" href="{{ backpack_url(strtolower($notif->ordre->type).'/'.$notif->ordre->id.'/show') }}"><strong>{{ $notif->ordre->user->name }}</strong> a regularisé l'{{ $notif->ordre->type }} que vous avez rejeté</a><br>
                                     <div class="d-flex justify-content-between">
-                                        <small class="text-muted"><i class="la la-file-text""></i>&nbsp; {{ $notif->ordre->numero_of }}</small>
+                                        <small class="text-muted"><i class="la la-file-text""></i>&nbsp; {{ $notif->ordre->code_affaire }}</small>
                                         <small class="text-muted"><i class="la la-clock"></i>&nbsp; {{ $notif->created_at->isoFormat('HH:mm') }}</small>
                                     </div>
                                 </div>
@@ -79,34 +57,12 @@
                     <div class="list-group-item list-group-item-accent-secondary p-0 bg-light text-center font-weight-bold text-muted text-uppercase small">Hier</div>
                     @forelse ($yesterday_notif as $notif)
                         @switch($notif->action)
-                            @case('ACCEPTER')
-                                <div class="list-group-item list-group-item-accent-success list-group-item-divider">
-                                    <i class="la la-check-circle-o text-success mr-1"></i>
-                                    <a class="text-dark" href="{{ backpack_url('ordre/'.$notif->ordre->id.'/show') }}"><strong>{{ $notif->user->name }}</strong> a accepté votre {{ $notif->ordre->type }}</a><br>
-                                    <div class="d-flex justify-content-between">
-                                        <small class="text-muted"><i class="la la-file-text""></i>&nbsp; {{ $notif->ordre->numero_of }}</small>
-                                        <small class="text-muted"><i class="la la-clock"></i>&nbsp; {{ $notif->created_at->isoFormat('HH:mm') }}</small>
-                                    </div>
-                                </div>
-                                @break
-
                             @case('REJETER')
                                 <div class="list-group-item list-group-item-accent-danger list-group-item-divider">
                                     <i class="la la-ban text-danger mr-1"></i>
                                     <a class="text-dark" href="{{ backpack_url('orj') }}"><strong>{{ $notif->user->name }}</strong> a rejeté votre {{ $notif->ordre->type }}</a><br>
                                     <div class="d-flex justify-content-between">
-                                        <small class="text-muted"><i class="la la-file-text""></i>&nbsp; {{ $notif->ordre->numero_of }}</small>
-                                        <small class="text-muted"><i class="la la-clock"></i>&nbsp; {{ $notif->created_at->isoFormat('HH:mm') }}</small>
-                                    </div>
-                                </div>
-                                @break
-
-                            @case('ACCUSER')
-                                <div class="list-group-item list-group-item-accent-primary list-group-item-divider">
-                                    <i class="la la-thumbs-up text-primary mr-1"></i>
-                                    <a class="text-dark" href="{{ backpack_url('facture/'.$notif->ordre->facture->id.'/show') }}"><strong>{{ $notif->user->name }}</strong> a accusé la reception de la facture de votre {{ $notif->ordre->type }}</a><br>
-                                    <div class="d-flex justify-content-between">
-                                        <small class="text-muted"><i class="la la-file-text""></i>&nbsp; {{ $notif->ordre->numero_of }}</small>
+                                        <small class="text-muted"><i class="la la-file-text""></i>&nbsp; {{ $notif->ordre->code_affaire }}</small>
                                         <small class="text-muted"><i class="la la-clock"></i>&nbsp; {{ $notif->created_at->isoFormat('HH:mm') }}</small>
                                     </div>
                                 </div>
@@ -117,7 +73,7 @@
                                 <i class="la la-edit text-success mr-1"></i>
                                 <a class="text-dark" href="{{ backpack_url(strtolower($notif->ordre->type).'/'.$notif->ordre->id.'/show') }}"><strong>{{ $notif->ordre->user->name }}</strong> a regularisé l'{{ $notif->ordre->type }} que vous avez rejeté</a><br>
                                 <div class="d-flex justify-content-between">
-                                    <small class="text-muted"><i class="la la-file-text""></i>&nbsp; {{ $notif->ordre->numero_of }}</small>
+                                    <small class="text-muted"><i class="la la-file-text""></i>&nbsp; {{ $notif->ordre->code_affaire }}</small>
                                     <small class="text-muted"><i class="la la-clock"></i>&nbsp; {{ $notif->created_at->isoFormat('HH:mm') }}</small>
                                 </div>
                             </div>

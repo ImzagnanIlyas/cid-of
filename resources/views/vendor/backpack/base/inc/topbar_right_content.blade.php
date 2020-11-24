@@ -16,8 +16,9 @@ if ( backpack_user()->role_id == config('backpack.role.ca_id') ){
     <ul class="nav navbar-nav ml-auto">
         <li class="nav-item d-md-down-none">
             <a class="nav-link aside-menu-toggler" type="button" data-toggle="aside-menu-lg-show">
+                <i class="la la-bell font-2xl"></i>
                 @if ($today_notif_count)
-                    <i class="la la-bell font-2xl"></i><span class="badge badge-pill badge-danger">{{ $today_notif_count }}</span>
+                    <span class="badge badge-pill badge-danger">{{ $today_notif_count }}</span>
                 @endif
             </a>
         </li>
