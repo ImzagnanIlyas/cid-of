@@ -180,7 +180,7 @@ class OrdreCrudController extends CrudController
         CRUD::column('code_affaire');
         CRUD::column('numero_of')->label('Numéro');
         CRUD::column('client');
-        //CRUD::column('motif');
+        CRUD::column('motif');
         $this->crud->addColumn([
             'name'     => 'statut',
             'label'    => 'Statut',
@@ -201,9 +201,9 @@ class OrdreCrudController extends CrudController
         }
         //CRUD::column('date_modification');
         //CRUD::column('justification');
-        //CRUD::column('montant');
-        //CRUD::column('montant_devise');
-        //CRUD::column('observation');
+        CRUD::column('montant');
+        CRUD::column('montant_devise');
+        CRUD::column('observation');
         //CRUD::column('refus');
         //CRUD::column('ville');
         //CRUD::column('division_id');
