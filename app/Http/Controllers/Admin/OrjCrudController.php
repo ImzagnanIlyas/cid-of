@@ -213,7 +213,7 @@ class OrjCrudController extends CrudController
         CRUD::field('observation');
         CRUD::field('client');
         CRUD::field('montant')->type('number')->attributes(["step" => "any"]);
-        CRUD::field('montant_devise');
+        CRUD::field('montant_devise')->label('Devise');
         $this->crud->addField(
             [   // Upload
                 'name'      => 'document',

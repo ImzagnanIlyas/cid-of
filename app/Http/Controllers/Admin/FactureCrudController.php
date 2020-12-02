@@ -73,7 +73,7 @@ class FactureCrudController extends CrudController
         CRUD::column('numero_facture');
         CRUD::column('client');
         CRUD::column('montant');
-        CRUD::column('montant_devise');
+        CRUD::column('montant_devise')->label('Devise');
         CRUD::column('date_facturation');
         $this->crud->addColumn([   // view of Ordre file
             'name' => 'facture-file',
@@ -318,7 +318,7 @@ class FactureCrudController extends CrudController
         ]);
         CRUD::field('numero_facture');
         CRUD::field('montant')->type('number')->attributes(["step" => "any"])->wrapper(['class' => 'form-group col-md-6']);
-        CRUD::field('montant_devise')->wrapper(['class' => 'form-group col-md-6']);
+        CRUD::field('montant_devise')->label('Devise')->wrapper(['class' => 'form-group col-md-6']);
         $this->crud->addField(
             [   // Upload
                 'name'      => 'facture_file',
@@ -386,7 +386,7 @@ class FactureCrudController extends CrudController
         if( backpack_user()->role_id == config('backpack.role.su_id') ){
             CRUD::field('numero_facture')->attributes(["disabled" => "disabled"]);
             CRUD::field('montant')->type('number')->attributes(["step" => "any"])->wrapper(['class' => 'form-group col-md-6']);
-            CRUD::field('montant_devise')->wrapper(['class' => 'form-group col-md-6']);
+            CRUD::field('montant_devise')->label('Devise')->wrapper(['class' => 'form-group col-md-6']);
 
 
             // remove choice from save action :

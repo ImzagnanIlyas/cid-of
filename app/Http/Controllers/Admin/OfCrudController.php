@@ -64,7 +64,7 @@ class OfCrudController extends CrudController
         CRUD::column('client');
         CRUD::column('observation');
         CRUD::column('montant')->type('number')->decimals(2);
-        CRUD::column('montant_devise');
+        CRUD::column('montant_devise')->label('Devise');
         $this->crud->addColumn([   // view of Ordre file
             'name' => 'ordre-file',
             'label' => 'Ordre de facturation',
@@ -304,7 +304,7 @@ class OfCrudController extends CrudController
         CRUD::field('observation');
         CRUD::field('client');
         CRUD::field('montant')->type('number')->attributes(["step" => "any"]);
-        CRUD::field('montant_devise');
+        CRUD::field('montant_devise')->label('Devise');
         $this->crud->addField(
             [   // Upload
                 'name'      => 'of',
@@ -402,7 +402,7 @@ class OfCrudController extends CrudController
         CRUD::field('observation');
         CRUD::field('client');
         CRUD::field('montant')->type('number')->attributes(["step" => "any"]);
-        CRUD::field('montant_devise');
+        CRUD::field('montant_devise')->label('Devise');
         $this->crud->addField(
             [   // Upload
                 'name'      => 'of',

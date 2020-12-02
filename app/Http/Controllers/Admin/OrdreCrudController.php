@@ -202,7 +202,7 @@ class OrdreCrudController extends CrudController
         //CRUD::column('date_modification');
         //CRUD::column('justification');
         CRUD::column('montant')->type('number')->decimals(2);
-        CRUD::column('montant_devise');
+        CRUD::column('montant_devise')->label('Devise');
         CRUD::column('observation');
         //CRUD::column('refus');
         //CRUD::column('ville');
@@ -232,7 +232,7 @@ class OrdreCrudController extends CrudController
         CRUD::column('client');
         CRUD::column('observation');
         CRUD::column('montant')->type('number')->decimals(2);
-        CRUD::column('montant_devise');
+        CRUD::column('montant_devise')->label('Devise');
         if ($ordre->type == 'OF'){
             $this->crud->addColumn([   // view of Ordre file
                 'name' => 'ordre-file',
@@ -339,7 +339,7 @@ class OrdreCrudController extends CrudController
         CRUD::field('observation');
         CRUD::field('client');
         CRUD::field('montant')->type('number')->attributes(["step" => "any"]);
-        CRUD::field('montant_devise');
+        CRUD::field('montant_devise')->label('Devise');
         $this->crud->addField(
             [   // Upload
                 'name'      => 'document',
