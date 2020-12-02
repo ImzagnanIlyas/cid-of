@@ -63,7 +63,7 @@ class OfCrudController extends CrudController
         CRUD::column('code_affaire');
         CRUD::column('client');
         CRUD::column('observation');
-        CRUD::column('montant')->type('number')->decimals(2)->dec_point('.')->thousands_sep(' ');
+        CRUD::column('montant')->type('number')->decimals(2);
         CRUD::column('montant_devise');
         $this->crud->addColumn([   // view of Ordre file
             'name' => 'ordre-file',
@@ -240,7 +240,7 @@ class OfCrudController extends CrudController
         }
         CRUD::column('code_affaire');
         CRUD::column('client');
-        CRUD::column('montant')->type('number')->decimals(2)->dec_point('.')->thousands_sep(' ');
+        CRUD::column('montant')->type('number')->decimals(2);
         CRUD::column('observation')->limit(1000000)->priority(100);
         $this->crud->addColumn([
             'name'     => 'statut',
