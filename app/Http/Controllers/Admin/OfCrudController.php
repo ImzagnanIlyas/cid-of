@@ -304,7 +304,7 @@ class OfCrudController extends CrudController
         CRUD::field('observation');
         CRUD::field('client');
         CRUD::field('montant')->type('number')->attributes(["step" => "any"]);
-        CRUD::field('montant_devise')->label('Devise');
+        CRUD::field('montant_devise')->label('Devise')->hint('Indiquer MAD ou la devise');
         $this->crud->addField(
             [   // Upload
                 'name'      => 'of',
@@ -402,7 +402,7 @@ class OfCrudController extends CrudController
         CRUD::field('observation');
         CRUD::field('client');
         CRUD::field('montant')->type('number')->attributes(["step" => "any"]);
-        CRUD::field('montant_devise')->label('Devise');
+        CRUD::field('montant_devise')->label('Devise')->hint('Indiquer MAD ou la devise');
         $this->crud->addField(
             [   // Upload
                 'name'      => 'of',

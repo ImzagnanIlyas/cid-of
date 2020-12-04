@@ -318,7 +318,7 @@ class FactureCrudController extends CrudController
         ]);
         CRUD::field('numero_facture');
         CRUD::field('montant')->type('number')->attributes(["step" => "any"])->wrapper(['class' => 'form-group col-md-6']);
-        CRUD::field('montant_devise')->label('Devise')->wrapper(['class' => 'form-group col-md-6']);
+        CRUD::field('montant_devise')->label('Devise')->hint('Indiquer MAD ou la devise')->wrapper(['class' => 'form-group col-md-6']);
         $this->crud->addField(
             [   // Upload
                 'name'      => 'facture_file',
