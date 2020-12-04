@@ -104,6 +104,7 @@ class OrjCrudController extends CrudController
 
         //Columns
         CRUD::column('type');
+        CRUD::column('code_affaire');
         $this->crud->addColumn([
             'name'         => 'division',
             'type'         => 'relationship',
