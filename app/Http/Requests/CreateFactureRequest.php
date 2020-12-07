@@ -41,7 +41,7 @@ class CreateFactureRequest extends FormRequest
     public function attributes()
     {
         return [
-            //
+            'facture_file' => 'fichier de facture'
         ];
     }
 

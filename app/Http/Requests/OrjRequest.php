@@ -60,7 +60,7 @@ class OrjRequest extends FormRequest
     public function messages()
     {
         return [
-            //
+            'document.required_with' => 'Le document est requis si vous supprimez l\'ancien'
         ];
     }
 }

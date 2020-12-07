@@ -47,7 +47,7 @@ class UpdateFactureRequest extends FormRequest
     public function attributes()
     {
         return [
-            //
+            'reception_file' => 'fichier de réception',
         ];
     }
 

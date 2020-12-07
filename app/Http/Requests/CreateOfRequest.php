@@ -44,7 +44,8 @@ class CreateOfRequest extends FormRequest
     public function attributes()
     {
         return [
-            'of' => 'Ordre de facturation',
+            'montant_devise' => 'devise',
+            'of' => 'fichier de l\'ordre de facturation',
             'justification.*' => 'justification'
         ];
     }

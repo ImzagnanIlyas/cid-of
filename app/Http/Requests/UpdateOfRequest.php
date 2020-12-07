@@ -43,7 +43,8 @@ class UpdateOfRequest extends FormRequest
     public function attributes()
     {
         return [
-            'of' => 'Ordre de facturation',
+            'montant_devise' => 'devise',
+            'of' => 'fichier de l\'ordre de facturation',
             'justification.*' => 'justification'
         ];
     }
@@ -56,7 +57,7 @@ class UpdateOfRequest extends FormRequest
     public function messages()
     {
         return [
-            'of.required_with' => 'Salam'
+            'of.required_with' => 'Le fichier de l\'ordre de facturation est requis si vous supprimez l\'ancien'
         ];
     }
 }
