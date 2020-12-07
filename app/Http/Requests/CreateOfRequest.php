@@ -27,7 +27,7 @@ class CreateOfRequest extends FormRequest
         return [
             'division_id' => 'required',
             'numero_of' => 'required',
-            'code_affaire' => 'required',
+            'code_affaire' => 'required|unique:ordres,code_affaire',
             'client' => 'required',
             'montant' => 'required',
             'montant_devise' => 'required',

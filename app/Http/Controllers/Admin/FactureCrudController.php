@@ -384,7 +384,7 @@ class FactureCrudController extends CrudController
         CRUD::setValidation(UpdateRequest::class);
 
         if( backpack_user()->role_id == config('backpack.role.su_id') ){
-            CRUD::field('numero_facture')->attributes(["disabled" => "disabled"]);
+            CRUD::field('numero_facture');
             CRUD::field('montant')->type('number')->attributes(["step" => "any"])->wrapper(['class' => 'form-group col-md-6']);
             CRUD::field('montant_devise')->label('Devise')->wrapper(['class' => 'form-group col-md-6']);
 
