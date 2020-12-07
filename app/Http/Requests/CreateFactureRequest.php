@@ -26,7 +26,7 @@ class CreateFactureRequest extends FormRequest
     public function rules()
     {
         return [
-            'numero_facture' => 'required|unique:factures,montant_devise',
+            'numero_facture' => 'required|unique:factures,numero_facture',
             'montant' => 'required',
             'montant_devise' => 'required',
             'facture_file' => 'required|mimes:pdf',

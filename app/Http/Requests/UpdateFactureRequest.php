@@ -27,7 +27,7 @@ class UpdateFactureRequest extends FormRequest
     {
         if( backpack_user()->role_id == config('backpack.role.su_id') ){
             return [
-                'numero_facture' => 'required|unique:factures,montant_devise',
+                'numero_facture' => 'required|unique:factures,numero_facture',
                 'montant' => 'required',
                 'montant_devise' => 'required',
             ];
