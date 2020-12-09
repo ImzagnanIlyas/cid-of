@@ -69,9 +69,17 @@ class HistoriqueCrudController extends CrudController
             'entity'    => 'ordre', // the method that defines the relationship in your Model
             'attribute' => 'type', // foreign key attribute that is shown to user
             'model'     => 'App\Models\Ordre', // foreign key model
-         ]);
+        ]);
         $this->crud->addColumn([
-            'name'     => 'type',
+            'name'     => 'division',
+            'label'    => 'Division',
+            'type'     => 'closure',
+            'function' => function($entry) {
+                return $entry->ordre->division->nom;
+            }
+        ]);
+        $this->crud->addColumn([
+            'name'     => 'numero',
             'label'    => 'Numéro ODF/FAE',
             'type'     => 'closure',
             'function' => function($entry) {
@@ -86,7 +94,15 @@ class HistoriqueCrudController extends CrudController
                 }
             }
         ]);
-        CRUD::column('motif')->limit(1000000);
+        $this->crud->addColumn([
+            'label'     => 'Code affaire', // Table column heading
+            'name'      => 'ordre', // the column that contains the ID of that connected entity;
+            'key'       => 'ordre_code_affaire', // the column that contains the ID of that connected entity;
+            'entity'    => 'ordre', // the method that defines the relationship in your Model
+            'attribute' => 'code_affaire', // foreign key attribute that is shown to user
+            'model'     => 'App\Models\Ordre', // foreign key model
+        ]);
+        CRUD::column('motif')->limit(1000000)->priority(99);
         CRUD::column('created_at')->label('Date de refus');
 
         $this->crud->removeAllButtons();
