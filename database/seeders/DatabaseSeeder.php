@@ -49,8 +49,8 @@ class DatabaseSeeder extends Seeder
         ");
         // Users
         DB::statement("INSERT INTO users (`name`, `email`, `password`, `role_id`) VALUES
-        ('Super User', 'su@admin.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 1),
-        ('Admin', 'admin@admin.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 2);
+        ('Super User', 'su@cid.ma', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 1),
+        ('Admin', 'admin@cid.ma', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 2);
         ");
     }
 }
