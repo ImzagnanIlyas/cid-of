@@ -53,7 +53,7 @@ class FactureCrudController extends CrudController
         //Columns
         if( backpack_user()->role_id == config('backpack.role.su_id') )
             CRUD::column('user')->relationship('user')->attribute('name')->label('Utilisateur');
-        CRUD::column('division_name');
+        CRUD::column('division_name')->label("Division");
         $this->crud->addColumn([
             'name'     => 'type',
             'label'    => 'Numéro ODF/FAE',
@@ -72,7 +72,7 @@ class FactureCrudController extends CrudController
         ]);
         CRUD::column('numero_facture');
         CRUD::column('client');
-        CRUD::column('montant');
+        CRUD::column('montant')->label("Montant facture");
         CRUD::column('montant_devise')->label('Devise');
         CRUD::column('date_facturation');
         $this->crud->addColumn([   // view of Ordre file
@@ -205,7 +205,7 @@ class FactureCrudController extends CrudController
         //Columns
         if( backpack_user()->role_id == config('backpack.role.su_id') )
             CRUD::column('user')->relationship('user')->attribute('name')->label('Utilisateur');
-        CRUD::column('division_name');
+        CRUD::column('division_name')->label("Division");
         $this->crud->addColumn([
             'name'     => 'type',
             'label'    => 'Numéro ODF/FAE',
@@ -232,7 +232,8 @@ class FactureCrudController extends CrudController
         ]);
         CRUD::column('numero_facture');
         CRUD::column('client')->priority(999);
-        CRUD::column('montant')->priority(1000);
+        CRUD::column('montant')->priority(1000)->label("Montant facture");
+        CRUD::column('montant_devise');
         CRUD::column('date_facturation');
         //CRUD::column('reception_client');
         $this->crud->addColumn([

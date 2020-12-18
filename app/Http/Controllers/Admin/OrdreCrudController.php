@@ -201,7 +201,7 @@ class OrdreCrudController extends CrudController
         }
         //CRUD::column('date_modification');
         //CRUD::column('justification');
-        CRUD::column('montant')->type('number')->decimals(2);
+        CRUD::column('montant')->type('number')->decimals(2)->label("Montant ordre");
         CRUD::column('montant_devise')->label('Devise');
         CRUD::column('observation');
         //CRUD::column('refus');
@@ -231,7 +231,7 @@ class OrdreCrudController extends CrudController
         CRUD::column('code_affaire');
         CRUD::column('client');
         CRUD::column('observation');
-        CRUD::column('montant')->type('number')->decimals(2);
+        CRUD::column('montant')->type('number')->decimals(2)->label("Division");
         CRUD::column('montant_devise')->label('Devise');
         if ($ordre->type == 'OF'){
             $this->crud->addColumn([   // view of Ordre file
