@@ -241,6 +241,7 @@ class OfCrudController extends CrudController
         CRUD::column('code_affaire');
         CRUD::column('client');
         CRUD::column('montant')->type('number')->decimals(2);
+        CRUD::column('montant_devise')->label('Devise');
         CRUD::column('observation')->limit(1000000)->priority(100);
         $this->crud->addColumn([
             'name'     => 'statut',

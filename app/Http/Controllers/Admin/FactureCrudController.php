@@ -233,7 +233,7 @@ class FactureCrudController extends CrudController
         CRUD::column('numero_facture');
         CRUD::column('client')->priority(999);
         CRUD::column('montant')->priority(1000)->label("Montant facture");
-        CRUD::column('montant_devise');
+        CRUD::column('montant_devise')->label('Devise');
         CRUD::column('date_facturation');
         //CRUD::column('reception_client');
         $this->crud->addColumn([
