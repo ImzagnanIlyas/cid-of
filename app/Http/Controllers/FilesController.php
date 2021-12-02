@@ -18,8 +18,10 @@ class FilesController extends Controller
         if ($ordre_context == 'ordre' || $ordre_context == 'orj') {
             return response()->json(
                 Attachement::where('ordre_id', '=', $ordre_id)
-                ->where('context', '=', 'of')
-                ->orWhere('context', '=', 'fae')
+                ->where(function($query) {
+                    $query->where('context', '=', 'of')
+                        ->orWhere('context', '=', 'fae');
+                })
                 ->get()
             );
         }else{
